@@ -25,18 +25,28 @@ public class Main {
             // Always wrap FileReader in BufferedReader.
             BufferedReader bufferedReader = new BufferedReader(fileReader);
 
-            String word = null;
+            String word;
 
             int i = 0;
             LinkedList<String> words = new LinkedList<>();
             while ((word = readWord(bufferedReader)) != null) {
-                words.push(word);
+                words.addLast(word);
+
+                System.out.println(word);
 
                 if (words.size() < 3) {
                     continue;
                 }
 
-                dictionary.put(new BiGram(words.get(0), words.get(1)), words.get(2));
+                System.out.println(words.get(0) + " " + words.get(1) + " " + words.get(2));
+
+                final BiGram biGram = new BiGram(words.get(0), words.get(1));
+                if(dictionary.containsKey(biGram)) {
+                    System.out.println(biGram.toString() + " " + biGram.hashCode());
+                }
+                else {
+                    dictionary.put(biGram, words.get(2));
+                }
 
                 words.removeFirst();
             }
@@ -91,7 +101,7 @@ public class Main {
             }
 
             //skip non alphabetic characters
-            if (Character.isAlphabetic(c)) {
+            if (Character.isAlphabetic(c) || '(' == c || ')' == c) {
                 sb.append(c);
             }
         }
@@ -110,6 +120,16 @@ public class Main {
         BiGram(final String one, final String two) {
             this.one = one;
             this.two = two;
+        }
+
+        @Override
+        public String toString() {
+            return this.one + " " + this.two;
+        }
+
+        @Override
+        public int hashCode() {
+            return this.one.hashCode() + 31 * this.two.hashCode();
         }
 
         @Override
