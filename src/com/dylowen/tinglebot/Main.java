@@ -1,11 +1,11 @@
 package com.dylowen.tinglebot;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
-import java.util.LinkedList;
+import java.util.List;
 
 import com.dylowen.tinglebot.brain.Brain;
+import com.dylowen.tinglebot.train.SkypeDatabaseTrainer;
+import com.dylowen.tinglebot.train.TextTrainer;
+import com.dylowen.tinglebot.train.Trainer;
 
 /**
  * TODO add description
@@ -16,142 +16,54 @@ import com.dylowen.tinglebot.brain.Brain;
 public class Main {
 
     public static void main(String[] args) {
-        final Brain brain = new Brain();
-
-        try {
-            // FileReader reads text files in the default encoding.
-            FileReader fileReader = new FileReader("/Users/dylan.owen/Desktop/war.txt");
-
-            // Always wrap FileReader in BufferedReader.
-            BufferedReader bufferedReader = new BufferedReader(fileReader);
-
-            String word;
-
-            LinkedList<String> words = new LinkedList<>();
-            while ((word = readWord(bufferedReader)) != null) {
-                words.addLast(word);
-
-                //System.out.println(word);
-
-                if (words.size() < 3) {
-                    continue;
-                }
-
-                brain.add(words);
-
-                words.removeFirst();
-            }
-
-            System.out.println("Brain stateCount: " + brain.stateCount());
-
-            LinkedList<String> sentence = brain.start();
-
-            for (int i = 0; i < 20; i++) {
-                final String nextWord = brain.get(sentence.get(sentence.size() - 2), sentence.getLast());
-
-                if (Brain.END_STRING != nextWord) {
-                    sentence.add(nextWord);
-                }
-                else {
-                    break;
-                }
-            }
-
-            System.out.println();
-            for (String sentenceWord : sentence) {
-                System.out.print(sentenceWord + " ");
-            }
-            System.out.println();
-
+        if (args.length < 1) {
+            System.err.println("Please enter a training file location");
+            return;
         }
-        catch (Exception e) {
-            System.out.println(e.getMessage());
+        //default to 3 for the gram size
+        final int GRAM_SIZE = (args.length < 2) ? 3 : Integer.parseInt(args[1]);
+
+        final String path = args[0];
+        final int extensionIndex = path.lastIndexOf('.');
+        final String extension = (extensionIndex < 0) ? "" : path.substring(extensionIndex + 1);
+
+        final Trainer trainer;
+        if ("db".equals(extension)) {
+            trainer = new SkypeDatabaseTrainer(path, GRAM_SIZE);
         }
-    }
+        else if ("txt".equals(extension)) {
+            trainer = new TextTrainer(path, GRAM_SIZE);
+        }
+        /*
+        else if ("brain".equals(extension)) {
+            //SerializedBrainTrainer
+        }
+        */
+        else {
+            throw new UnsupportedOperationException("Unknown file type");
+        }
 
-    //this is super crude
-    //TODO &apos;
-    private static String readWord(final BufferedReader buffer)
-            throws IOException {
-        StringBuilder sb = new StringBuilder();
+        final Brain brain = trainer.train();
 
-        boolean foundBracket = false;
+        List<String> sentence = brain.start();
 
-        while (true) {
-            final int num = buffer.read();
+        for (int i = 0; i < 20; i++) {
+            List<String> last = sentence.subList(sentence.size() - GRAM_SIZE, sentence.size());
 
-            //end of the stream
-            if (-1 == num) {
+            final String nextWord = brain.get(last);
+
+            if (Brain.END_STRING != nextWord) {
+                sentence.add(nextWord);
+            }
+            else {
                 break;
             }
-
-            final char c = (char) num;
-
-            //skip over brackets
-            if (foundBracket) {
-                //break out of our bracket search
-                if ('>' == c) {
-                    foundBracket = false;
-                }
-                continue;
-            }
-            if ('<' == c) {
-                foundBracket = true;
-                continue;
-            }
-
-            if (Character.isWhitespace(c)) {
-                //if we have a word we're done, otherwise eat up white space
-                if (sb.length() > 0) {
-                    break;
-                }
-                else {
-                    continue;
-                }
-            }
-
-            //skip non alphabetic characters
-            if (Character.isAlphabetic(c) || '(' == c || ')' == c) {
-                sb.append(c);
-            }
         }
 
-        if (sb.length() <= 0) {
-            return null;
+        System.out.println();
+        for (String sentenceWord : sentence) {
+            System.out.print(sentenceWord + " ");
         }
-
-        return sb.toString().toLowerCase();
-    }
-
-    private static class BiGram {
-        final String one;
-        final String two;
-
-        BiGram(final String one, final String two) {
-            this.one = one;
-            this.two = two;
-        }
-
-        @Override
-        public String toString() {
-            return this.one + " " + this.two;
-        }
-
-        @Override
-        public int hashCode() {
-            return this.one.hashCode() + 31 * this.two.hashCode();
-        }
-
-        @Override
-        public boolean equals(final Object object) {
-            if (!(object instanceof BiGram)) {
-                return false;
-            }
-
-            final BiGram right = (BiGram) object;
-
-            return this.one.equals(right.one) && this.two.equals(right.two);
-        }
-
+        System.out.println();
     }
 }

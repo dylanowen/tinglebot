@@ -32,7 +32,7 @@ public class Brain
             this.dictionary.put(nGram, set);
         }
         else {
-            //System.out.println(biGram.toString() + " [" + set.toString() + "]");
+            //System.out.println(nGram.toString() + " [" + set.toString() + "]");
         }
         set.add(word);
     }
@@ -54,6 +54,10 @@ public class Brain
         sentenceStart.add(entry.getValue().get());
 
         return sentenceStart;
+    }
+
+    public String get(final List<String> words) {
+        return get(words.toArray(new String[words.size()]));
     }
 
     public String get(final String... words) {
