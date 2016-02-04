@@ -5,8 +5,11 @@ import com.dylowen.tinglebot.brain.Brain;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
 import java.util.LinkedList;
-
+import org.apache.commons.lang.StringEscapeUtils;
 /**
  * TODO add description
  *
@@ -33,22 +36,28 @@ public class TextTrainer implements Trainer {
 
             // Always wrap FileReader in BufferedReader.
             BufferedReader bufferedReader = new BufferedReader(fileReader);
-
-            String word;
+            //String word;
             LinkedList<String> words = new LinkedList<>();
-            while ((word = readWord(bufferedReader)) != null) {
-                words.addLast(word);
 
-                //System.out.println(word);
+            String line;
+            while ((line = readLine(bufferedReader)) != null) {
+                ArrayList<String> lineWords = wordsFromLine(line);
+                for (String word : lineWords) {
+                    if(word.isEmpty() || word == null) break;
+                    words.addLast(word);
 
-                if (words.size() < this.gramSize + 1) {
-                    continue;
+                    if (words.size() < this.gramSize + 1) {
+                        continue;
+                    }
+
+                    brain.add(words);
+
+                    words.removeFirst();
+
+
                 }
-
-                brain.add(words);
-
-                words.removeFirst();
             }
+            
 
             System.out.println("Brain stateCount: " + brain.stateCount());
 
@@ -59,6 +68,44 @@ public class TextTrainer implements Trainer {
 
         return brain;
     }
+
+    private static String readLine(final BufferedReader buffer) throws IOException {
+        StringBuilder sb = new StringBuilder();
+        while(true){
+            final int num = buffer.read();
+            if (-1 == num) { //end
+                return null;
+            }
+            final char c = (char) num;
+            if(c == '\n'){
+                break;
+            }
+            sb.append(c);
+        }
+
+        String str = sb.toString();
+        str = str.replaceAll("\\<.*?\\> ?", "");
+        str = str.replaceAll("\\[.*?\\] ?", "");
+        return str;
+    }
+
+    public static ArrayList<String> wordsFromLine(String line) {
+        ArrayList<String> words;
+        words = new ArrayList<>(Arrays.asList(line.split(" ")));
+        for(int i=0;i<words.size();i++){
+            words.set(i,prune(words.get(i)));
+        }
+
+        for(Iterator<String> iterator = words.iterator(); iterator.hasNext();){
+            String string = iterator.next();
+            if (string.isEmpty()) {
+                // Remove the current element from the iterator and the list.
+                iterator.remove();
+            }
+        }
+        return words;
+    }
+
 
     //this is super crude
     //TODO &apos;
@@ -102,15 +149,36 @@ public class TextTrainer implements Trainer {
             }
 
             //skip non alphabetic characters
-            if (Character.isAlphabetic(c) || '(' == c || ')' == c) {
-                sb.append(c);
-            }
+//            if (Character.isAlphabetic(c) || '(' == c || ')' == c) {
+//                sb.append(c);
+//            }
+            sb.append(c);
         }
 
         if (sb.length() <= 0) {
             return null;
         }
+        String prePruned = sb.toString();
+        String pruned = prune(prePruned);
 
-        return sb.toString().toLowerCase();
+//        if (!prePruned.equals(pruned)){
+//            System.out.println(prePruned + " -> " + pruned);
+//        }
+
+        return pruned;
+    }
+
+    private static String prune(String word){
+        String prePruned = word;
+        word = StringEscapeUtils.unescapeXml(word);
+        word = word.toLowerCase();
+        if(word.startsWith("http")) return "";
+        boolean emoji = word.startsWith("(") && word.endsWith(")");
+        word = word.replaceAll("[^a-z0-9'!?.]","");
+        if(emoji) word = "(" + word + ")";
+//        if (!prePruned.equals(word)){
+//            System.out.println(prePruned + " -> " + word);
+//        }
+        return word;
     }
 }
