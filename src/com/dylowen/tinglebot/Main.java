@@ -3,10 +3,9 @@ package com.dylowen.tinglebot;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.Map;
-import java.util.Random;
+
+import com.dylowen.tinglebot.brain.Brain;
 
 /**
  * TODO add description
@@ -17,11 +16,11 @@ import java.util.Random;
 public class Main {
 
     public static void main(String[] args) {
-        Map<BiGram, WeightedSet<String>> dictionary = new HashMap<>();
+        final Brain brain = new Brain();
 
         try {
             // FileReader reads text files in the default encoding.
-            FileReader fileReader = new FileReader("/Users/dylan.owen/Desktop/tingchat.txt");
+            FileReader fileReader = new FileReader("/Users/dylan.owen/Desktop/war.txt");
 
             // Always wrap FileReader in BufferedReader.
             BufferedReader bufferedReader = new BufferedReader(fileReader);
@@ -38,41 +37,20 @@ public class Main {
                     continue;
                 }
 
-                final BiGram biGram = new BiGram(words.get(0), words.get(1));
-                WeightedSet<String> set = dictionary.get(biGram);
-                if (set == null) {
-                    set = new WeightedSet<>();
-                    dictionary.put(biGram, set);
-                }
-                else {
-                    //System.out.println(biGram.toString() + " [" + set.toString() + "]");
-                }
-                set.add(words.get(2));
+                brain.add(words);
 
                 words.removeFirst();
             }
 
-            System.out.println("Dictionary size: " + dictionary.size());
+            System.out.println("Brain stateCount: " + brain.stateCount());
 
-
-            final Random rand = new Random();
-            //yeah this is the worst
-            @SuppressWarnings("unchecked")
-            Map.Entry<BiGram, WeightedSet<String>> first = (Map.Entry<BiGram, WeightedSet<String>>) dictionary.entrySet().toArray()[rand.nextInt(dictionary.size())];
-
-            LinkedList<String> sentence = new LinkedList<>();
-            sentence.add(first.getKey().one);
-            sentence.add(first.getKey().two);
-            sentence.add(first.getValue().get());
-            System.out.println(first.getKey().toString() + " [" + first.getValue().toString() + "]");
+            LinkedList<String> sentence = brain.start();
 
             for (int i = 0; i < 20; i++) {
-                BiGram current = new BiGram(sentence.get(sentence.size() - 2), sentence.getLast());
+                final String nextWord = brain.get(sentence.get(sentence.size() - 2), sentence.getLast());
 
-                WeightedSet<String> set = dictionary.get(current);
-                if (set != null) {
-                    System.out.println(current.toString() + " [" + set.toString() + "]");
-                    sentence.add(set.get());
+                if (Brain.END_STRING != nextWord) {
+                    sentence.add(nextWord);
                 }
                 else {
                     break;
@@ -87,7 +65,7 @@ public class Main {
 
         }
         catch (Exception e) {
-            //whatever
+            System.out.println(e.getMessage());
         }
     }
 

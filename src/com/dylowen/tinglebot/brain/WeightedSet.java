@@ -1,5 +1,6 @@
-package com.dylowen.tinglebot;
+package com.dylowen.tinglebot.brain;
 
+import java.io.Serializable;
 import java.util.Random;
 
 import gnu.trove.iterator.TObjectIntIterator;
@@ -11,15 +12,11 @@ import gnu.trove.map.hash.TObjectIntHashMap;
  * @author dylan.owen
  * @since Feb-2016
  */
-public class WeightedSet<T> {
-    //trove map
-    final TObjectIntHashMap<T> map = new TObjectIntHashMap<>();
+class WeightedSet<T> implements Serializable {
+    private final TObjectIntHashMap<T> map = new TObjectIntHashMap<>();
     private int total = 0;
 
-    private Random rand = new Random();
-
-    public WeightedSet() {
-    }
+    private final transient Random rand = new Random();
 
     public void add(final T obj) {
         this.map.adjustOrPutValue(obj, 1, 1);
