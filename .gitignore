@@ -22,3 +22,6 @@ gradle-app.setting
 
 # Cache of project
 .gradletasknamecache
+
+#ignore tingchat.txt if you store locally
+tingchat.txt

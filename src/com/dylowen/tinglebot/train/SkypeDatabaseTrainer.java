@@ -2,7 +2,6 @@ package com.dylowen.tinglebot.train;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 
 import com.almworks.sqlite4java.SQLite;
 import com.almworks.sqlite4java.SQLiteConnection;
@@ -46,11 +45,14 @@ public class SkypeDatabaseTrainer
         try {
             db.open();
             //I don't care about sql injection because you'll only be breaking your own database
-            SQLiteStatement st = db.prepare("select body_xml from Messages where " + this.settings.sqlWhereClause
-                    + " order by timestamp__ms asc limit 10");
+            final String where = (this.settings.sqlWhereClause.length() > 0)
+                    ? " where " + this.settings.sqlWhereClause
+                    : "";
+
+            final SQLiteStatement st = db.prepare("select body_xml from Messages" + where + " order by timestamp__ms asc limit 10");
             try {
                 while (st.step()) {
-                    final InputStream xml = st.columnStream(0);
+                    final String xml = st.columnString(0);
 
                     System.out.println(xml);
                 }
