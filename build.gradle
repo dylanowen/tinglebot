@@ -8,12 +8,14 @@ sourceSets {
         java {
             srcDir 'src'
             java.srcDirs -= "src/main/java"
+            output.classesDir = 'build/main'
         }
     }
     test {
         java {
             srcDir 'test/java'
             java.srcDirs -= "src/test/java"
+            output.classesDir = 'build/test'
         }
     }
 }
@@ -27,6 +29,26 @@ repositories {
 dependencies {
     compile 'net.sf.trove4j:trove4j:3.0.3'
     compile 'com.almworks.sqlite4java:sqlite4java:1.0.392'
+    compile 'com.almworks.sqlite4java:libsqlite4java-osx:1.0.392'
+    compile group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.7.0'
+    compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.7.0'
+    compile group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: '2.7.0'
 
     testCompile group: 'junit', name: 'junit', version: '4.11'
+}
+
+/* Copy the native files */
+task copyNativeDeps(type: Copy) {
+    from (configurations.compile + configurations.testCompile) {
+        include "*.dylib"
+    }
+    into 'build/libs'
+}
+
+compileJava {
+    dependsOn copyNativeDeps
+}
+
+compileTestJava {
+    dependsOn copyNativeDeps
 }

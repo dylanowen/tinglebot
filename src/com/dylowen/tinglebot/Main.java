@@ -1,5 +1,6 @@
 package com.dylowen.tinglebot;
 
+import java.util.Arrays;
 import java.util.List;
 
 import com.dylowen.tinglebot.brain.Brain;
@@ -20,6 +21,7 @@ public class Main {
             System.err.println("Please enter a training file location");
             return;
         }
+
         //default to 3 for the gram size
         final int GRAM_SIZE = (args.length < 2) ? 3 : Integer.parseInt(args[1]);
 
@@ -28,7 +30,7 @@ public class Main {
         final String extension = (extensionIndex < 0) ? "" : path.substring(extensionIndex + 1);
 
         final Trainer trainer;
-        if ("db".equals(extension)) {
+        if ("json".equals(extension)) {
             trainer = new SkypeDatabaseTrainer(path, GRAM_SIZE);
         }
         else if ("txt".equals(extension)) {
