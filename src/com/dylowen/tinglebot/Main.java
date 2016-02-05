@@ -1,6 +1,5 @@
 package com.dylowen.tinglebot;
 
-import java.util.Arrays;
 import java.util.List;
 
 import com.dylowen.tinglebot.brain.Brain;
@@ -47,25 +46,16 @@ public class Main {
 
         final Brain brain = trainer.train();
 
-        List<String> sentence = brain.start();
+        final StringBuilder sb = new StringBuilder();
 
-        for (int i = 0; i < 20; i++) {
-            List<String> last = sentence.subList(sentence.size() - GRAM_SIZE, sentence.size());
-
-            final String nextWord = brain.get(last);
-
-            if (Brain.END_STRING != nextWord) {
-                sentence.add(nextWord);
-            }
-            else {
-                break;
-            }
+        List<String> sentence = brain.getSentenceList();
+        sb.append(Brain.concatSentence(sentence));
+        while (sb.length() < 140) {
+            sb.append("\n");
+            sentence = brain.getSentenceList();
+            sb.append(Brain.concatSentence(sentence));
         }
 
-        System.out.println();
-        for (String sentenceWord : sentence) {
-            System.out.print(sentenceWord + " ");
-        }
-        System.out.println();
+        System.out.println(sb.toString());
     }
 }

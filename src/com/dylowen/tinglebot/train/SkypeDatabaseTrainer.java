@@ -38,18 +38,19 @@ public class SkypeDatabaseTrainer
 
     @Override
     public Brain train() {
-        final Brain brain = new Brain();
+        final Brain brain = new Brain(this.gramSize);
 
         final SQLiteConnection db = new SQLiteConnection(new File(this.settings.dbPath));
 
         try {
             db.open();
             //I don't care about sql injection because you'll only be breaking your own database
-            final String where = (this.settings.sqlWhereClause.length() > 0)
+            final String whereClaus = (this.settings.sqlWhereClause.length() > 0)
                     ? " where " + this.settings.sqlWhereClause
                     : "";
 
-            final SQLiteStatement st = db.prepare("select body_xml from Messages" + where + " order by timestamp__ms asc limit 10");
+            final SQLiteStatement st = db.prepare(
+                    "select body_xml from Messages" + whereClaus + " order by timestamp__ms asc limit 10");
             try {
                 while (st.step()) {
                     final String xml = st.columnString(0);

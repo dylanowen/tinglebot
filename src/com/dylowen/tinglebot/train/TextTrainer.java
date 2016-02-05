@@ -8,9 +8,9 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedList;
 
+import org.apache.commons.lang3.StringEscapeUtils;
 
 import com.dylowen.tinglebot.brain.Brain;
-import org.apache.commons.lang3.StringEscapeUtils;
 
 /**
  * TODO add description
@@ -31,7 +31,7 @@ public class TextTrainer
 
     @Override
     public Brain train() {
-        final Brain brain = new Brain();
+        final Brain brain = new Brain(this.gramSize);
 
         try {
             // FileReader reads text files in the default encoding.
@@ -46,18 +46,7 @@ public class TextTrainer
             while ((line = readLine(bufferedReader)) != null) {
                 ArrayList<String> lineWords = wordsFromLine(line);
                 for (String word : lineWords) {
-                    if (word.isEmpty() || word == null)
-                        break;
-                    words.addLast(word);
-
-                    if (words.size() < this.gramSize + 1) {
-                        continue;
-                    }
-
-                    brain.add(words);
-
-                    words.removeFirst();
-
+                    brain.feed(word);
                 }
             }
 
@@ -66,6 +55,7 @@ public class TextTrainer
         }
         catch (Exception e) {
             System.out.println(e.getMessage());
+            throw new RuntimeException(e);
         }
 
         return brain;

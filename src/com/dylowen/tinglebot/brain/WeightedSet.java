@@ -41,6 +41,10 @@ class WeightedSet<T> implements Serializable {
         throw new AssertionError("we should never get here");
     }
 
+    public int size() {
+        return this.map.size();
+    }
+
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder();

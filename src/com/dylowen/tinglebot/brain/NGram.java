@@ -1,6 +1,9 @@
 package com.dylowen.tinglebot.brain;
 
 import java.io.Serializable;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * TODO add description
@@ -8,25 +11,27 @@ import java.io.Serializable;
  * @author dylan.owen
  * @since Feb-2016
  */
-class NGram implements Serializable {
-    private final String[] words;
-    private transient int hash = 0;
+class NGram
+    implements Serializable {
+    private final List<String> words;
 
-    NGram(final String... words) {
-        this.words = words;
+    NGram(final List<String> words) {
+        //defensively copy
+        this.words = new LinkedList(words);
     }
 
-    public String[] getWords() {
+    public List<String> getWords() {
         return this.words;
     }
 
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder(this.words[0]);
+        final Iterator<String> it = this.words.listIterator();
+        final StringBuilder sb = new StringBuilder(it.next());
 
-        for (int i = 1; i < this.words.length; i++) {
+        while (it.hasNext()) {
             sb.append(" ");
-            sb.append(this.words[i]);
+            sb.append(it.next());
         }
 
         return sb.toString();
@@ -34,37 +39,20 @@ class NGram implements Serializable {
 
     @Override
     public int hashCode() {
-        //copied right from String.hashCode()
-        int h = hash;
-        if (h == 0 && this.words.length > 0) {
-            for (final String word : this.words) {
-                h = 31 * h + word.hashCode();
-            }
-            this.hash = h;
-        }
-        return h;
+        return this.words.hashCode();
     }
 
     @Override
     public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
         if (!(object instanceof NGram)) {
             return false;
         }
 
-        final String[] rightWords = ((NGram) object).getWords();
+        return this.words.equals(((NGram) object).getWords());
 
-        //these aren't equal if they're different lengths
-        if (this.words.length != rightWords.length) {
-            return false;
-        }
-
-        //loop over all the words checking their equality
-        for (int i = 0; i < this.words.length; i++) {
-            if (!this.words[i].equals(rightWords[i])) {
-                return false;
-            }
-        }
-
-        return true;
+        //TODO compare without capitalization?
     }
 }
