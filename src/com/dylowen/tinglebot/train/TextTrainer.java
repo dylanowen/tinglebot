@@ -7,7 +7,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
 
+import com.dylowen.tinglebot.Timer;
 import org.apache.commons.lang3.StringEscapeUtils;
 
 import com.dylowen.tinglebot.brain.Brain;
@@ -31,6 +33,7 @@ public class TextTrainer
 
     @Override
     public Brain train() {
+        final Timer timer = new Timer();
         final Brain brain = new Brain(this.gramSize);
 
         try {
@@ -39,19 +42,15 @@ public class TextTrainer
 
             // Always wrap FileReader in BufferedReader.
             BufferedReader bufferedReader = new BufferedReader(fileReader);
-            //String word;
-            LinkedList<String> words = new LinkedList<>();
 
             String line;
             while ((line = readLine(bufferedReader)) != null) {
-                ArrayList<String> lineWords = wordsFromLine(line);
-                for (String word : lineWords) {
-                    brain.feed(word);
-                }
+                wordsFromLine(line).stream().forEach(brain::feed);
             }
+            timer.stop();
 
             System.out.println("Brain stateCount: " + brain.stateCount());
-
+            System.out.println("Brain feed time: " + timer.getS() + "s");
         }
         catch (Exception e) {
             System.out.println(e.getMessage());

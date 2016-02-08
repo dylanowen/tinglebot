@@ -64,12 +64,12 @@ public class Brain
     }
 
     public String getSentence() {
-        final List<String> words = getSentenceList();
+        final List<String> words = getSentenceWords();
 
         return Brain.concatSentence(words);
     }
 
-    public List<String> getSentenceList() {
+    public List<String> getSentenceWords() {
         final Map.Entry<NGram, WeightedSet<String>> first = getRandomEntry();
 
         final LinkedList<String> sentence = new LinkedList<>(first.getKey().getWords());
@@ -78,7 +78,7 @@ public class Brain
         return sentence;
     }
 
-    public List<String> getSentenceList(final LinkedList<String> input) {
+    public List<String> getSentenceWords(final LinkedList<String> input) {
         final LinkedList<String> sentence = new LinkedList<>(input.subList(input.size() - this.gramSize, input.size()));
 
         continueSentence(sentence);
@@ -92,8 +92,8 @@ public class Brain
         do {
             nextWord = getNextWord(sentence);
             sentence.add(nextWord);
-        } while (WordType.getType(nextWord) != WordType.END_SENTENCE && sentence.size() < MAX_WORDS_IN_SENTENCE);
-        System.out.println(WordType.getType(nextWord).name() + " " + nextWord);
+        } while (GenericWordType.getType(nextWord) != GenericWordType.END_SENTENCE && sentence.size() < MAX_WORDS_IN_SENTENCE);
+        System.out.println(GenericWordType.getType(nextWord).name() + " " + nextWord);
     }
 
     private String getNextWord(final LinkedList<String> input) {
@@ -144,10 +144,10 @@ public class Brain
         final StringBuilder sb = new StringBuilder();
         final Iterator<String> it = words.listIterator();
 
-        WordType.START_SENTENCE.appendSpacedWord(it.next(), sb);
+        GenericWordType.START_SENTENCE.appendSpacedWord(it.next(), sb);
 
         while (it.hasNext()) {
-            WordType.appendUntypedWord(it.next(), sb);
+            GenericWordType.appendUntypedWord(it.next(), sb);
         }
 
         return sb.toString();

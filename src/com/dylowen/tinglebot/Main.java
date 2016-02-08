@@ -48,11 +48,11 @@ public class Main {
 
         final StringBuilder sb = new StringBuilder();
 
-        List<String> sentence = brain.getSentenceList();
+        List<String> sentence = brain.getSentenceWords();
         sb.append(Brain.concatSentence(sentence));
         while (sb.length() < 140) {
             sb.append("\n");
-            sentence = brain.getSentenceList();
+            sentence = brain.getSentenceWords();
             sb.append(Brain.concatSentence(sentence));
         }
 
