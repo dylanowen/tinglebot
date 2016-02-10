@@ -37,6 +37,7 @@ public class Brain
             this.input = new LinkedList<>();
         }
         this.input.add(word);
+        //System.out.println(word);
 
         //not enough input
         if (this.input.size() <= this.gramSize) {

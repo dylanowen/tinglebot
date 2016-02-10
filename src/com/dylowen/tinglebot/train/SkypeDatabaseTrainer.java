@@ -9,6 +9,7 @@ import com.almworks.sqlite4java.SQLiteException;
 import com.almworks.sqlite4java.SQLiteStatement;
 import com.dylowen.tinglebot.Json;
 import com.dylowen.tinglebot.brain.Brain;
+import org.apache.commons.lang3.StringEscapeUtils;
 
 /**
  * TODO add description
@@ -17,7 +18,7 @@ import com.dylowen.tinglebot.brain.Brain;
  * @since Feb-2016
  */
 public class SkypeDatabaseTrainer
-    implements Trainer {
+    extends Trainer {
 
     private final Settings settings;
     private final int gramSize;
@@ -50,13 +51,25 @@ public class SkypeDatabaseTrainer
                     : "";
 
             final SQLiteStatement st = db.prepare(
-                    "select body_xml from Messages" + whereClaus + " order by timestamp__ms asc limit 10");
+                    "select body_xml from Messages" + whereClaus + " order by timestamp__ms asc");
             try {
                 while (st.step()) {
-                    final String xml = st.columnString(0);
+                    String xml = st.columnString(0);
+                    if (xml != null) {
+                        xml = xml.replaceAll("\\<.*?\\> ?", "");
+                        xml = xml.replaceAll("\\[.*?\\] ?", "");
 
-                    System.out.println(xml);
+                        xml = StringEscapeUtils.unescapeXml(xml);
+
+                        wordsFromLine(xml).stream().forEach(brain::feed);
+                    }
+
+                    //System.out.println(xml);
                 }
+            }
+            catch (Exception e) {
+                System.out.println(e.getMessage());
+                throw new RuntimeException(e);
             }
             finally {
                 st.dispose();
