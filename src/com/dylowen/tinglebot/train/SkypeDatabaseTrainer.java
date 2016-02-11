@@ -8,6 +8,7 @@ import com.almworks.sqlite4java.SQLiteConnection;
 import com.almworks.sqlite4java.SQLiteException;
 import com.almworks.sqlite4java.SQLiteStatement;
 import com.dylowen.tinglebot.Json;
+import com.dylowen.tinglebot.Timer;
 import com.dylowen.tinglebot.brain.Brain;
 import org.apache.commons.lang3.StringEscapeUtils;
 
@@ -39,6 +40,7 @@ public class SkypeDatabaseTrainer
 
     @Override
     public Brain train() {
+        final Timer timer = new Timer();
         final Brain brain = new Brain(this.gramSize);
 
         final SQLiteConnection db = new SQLiteConnection(new File(this.settings.dbPath));
@@ -50,8 +52,10 @@ public class SkypeDatabaseTrainer
                     ? " where " + this.settings.sqlWhereClause
                     : "";
 
-            final SQLiteStatement st = db.prepare(
-                    "select body_xml from Messages" + whereClaus + " order by timestamp__ms asc");
+            final String sqlStatement = "select body_xml from Messages" + whereClaus + " order by timestamp__ms asc";
+            System.out.println(sqlStatement);
+
+            final SQLiteStatement st = db.prepare(sqlStatement);
             try {
                 while (st.step()) {
                     String xml = st.columnString(0);
@@ -66,6 +70,9 @@ public class SkypeDatabaseTrainer
 
                     //System.out.println(xml);
                 }
+
+                System.out.println("Brain stateCount: " + brain.stateCount());
+                System.out.println("Brain feed time: " + timer.getS() + "s");
             }
             catch (Exception e) {
                 System.out.println(e.getMessage());

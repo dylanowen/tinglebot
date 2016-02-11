@@ -23,7 +23,7 @@ public abstract class Trainer {
 
     public static List<String> wordsFromLine(String line) {
         final List<String> dirtyWords = Arrays.asList(line.split(" ")).parallelStream().filter(
-                word -> !word.startsWith("http") || word.length() == 0).collect(Collectors.toList());
+                word -> !(word.startsWith("http") || word.length() == 0)).collect(Collectors.toList());
         final List<String> cleanWords = new ArrayList<>();
 
         for (String word : dirtyWords) {
