@@ -2,6 +2,16 @@ package com.dylowen.tinglebot;
 
 import java.util.List;
 
+import com.dylowen.tinglebot.train.SerializedBrainTrainer;
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.DefaultParser;
+import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.cli.MissingOptionException;
+import org.apache.commons.cli.Option;
+import org.apache.commons.cli.Options;
+import org.apache.commons.cli.ParseException;
+
 import com.dylowen.tinglebot.brain.Brain;
 import com.dylowen.tinglebot.train.SkypeDatabaseTrainer;
 import com.dylowen.tinglebot.train.TextTrainer;
@@ -15,47 +25,91 @@ import com.dylowen.tinglebot.train.Trainer;
  */
 public class Main {
 
+    final static Option BRAIN_EXPORT_PATH = Option.builder("e").longOpt("export").argName("export_location").hasArg().desc(
+            "where to export the brain").build();
+
+    final static Option HELP = new Option("help", "print this menu");
+
+    final static Options MAIN_OPTIONS = new Options();
+
+    static {
+        MAIN_OPTIONS.addOption(BRAIN_EXPORT_PATH);
+        MAIN_OPTIONS.addOption(HELP);
+    }
+
     public static void main(String[] args) {
-        if (args.length < 1) {
-            System.err.println("Please enter a training file location");
-            return;
-        }
+        CommandLineParser parser = new DefaultParser();
 
-        //default to 3 for the gram size
-        final int GRAM_SIZE = (args.length < 2) ? 3 : Integer.parseInt(args[1]);
+        try {
+            CommandLine line = parser.parse(MAIN_OPTIONS, args, true);
 
-        final String path = args[0];
-        final int extensionIndex = path.lastIndexOf('.');
-        final String extension = (extensionIndex < 0) ? "" : path.substring(extensionIndex + 1);
+            if (line.hasOption(HELP.getOpt())) {
+                HelpFormatter formatter = new HelpFormatter();
+                formatter.printHelp("tinglebot <trainer_file>", MAIN_OPTIONS, true);
 
-        final Trainer trainer;
-        if ("json".equals(extension)) {
-            trainer = new SkypeDatabaseTrainer(path, GRAM_SIZE);
-        }
-        else if ("txt".equals(extension)) {
-            trainer = new TextTrainer(path, GRAM_SIZE);
-        }
-        /*
-        else if ("brain".equals(extension)) {
-            //SerializedBrainTrainer
-        }
-        */
-        else {
-            throw new UnsupportedOperationException("Unknown file type");
-        }
+                return;
+            }
 
-        final Brain brain = trainer.train();
+            final String path;
+            final String exportPath = line.getOptionValue(BRAIN_EXPORT_PATH.getOpt());
 
-        final StringBuilder sb = new StringBuilder();
+            //make sure we got a training file
+            if (line.getArgs().length > 0) {
+                path = line.getArgs()[0];
+            }
+            else {
+                System.err.println("Please enter a training file location");
+                return;
+            }
 
-        List<String> sentence = brain.getSentenceWords();
-        sb.append(Brain.concatSentence(sentence));
-        while (sb.length() < 140) {
-            sb.append("\n");
-            sentence = brain.getSentenceWords();
+            final int extensionIndex = path.lastIndexOf('.');
+            final String extension = (extensionIndex < 0) ? "" : path.substring(extensionIndex + 1);
+
+            final Trainer trainer;
+            if ("json".equals(extension)) {
+                trainer = new SkypeDatabaseTrainer(path);
+            }
+            else if ("txt".equals(extension)) {
+                trainer = new TextTrainer(path);
+            }
+            else if ("brain".equals(extension)) {
+                trainer = new SerializedBrainTrainer(path);
+            }
+            else {
+                throw new UnsupportedOperationException("Unknown file type");
+            }
+
+            final Brain brain = trainer.train();
+
+            //check if we should export the brain
+            if (exportPath != null) {
+                brain.export(exportPath);
+            }
+
+            final StringBuilder sb = new StringBuilder();
+
+            List<String> sentence = brain.getSentenceWords();
             sb.append(Brain.concatSentence(sentence));
-        }
+            while (sb.length() < 140) {
+                sb.append("\n");
+                sentence = brain.getSentenceWords();
+                sb.append(Brain.concatSentence(sentence));
+            }
 
-        System.out.println(sb.toString());
+            System.out.println(sb.toString());
+        }
+        catch (MissingOptionException e) {
+            for (Object o : e.getMissingOptions()) {
+                printMissingArgError(MAIN_OPTIONS.getOption(o.toString()));
+            }
+        }
+        catch (ParseException exp) {
+            // oops, something went wrong
+            System.err.println("Parsing failed. Reason: " + exp.getMessage());
+        }
+    }
+
+    static void printMissingArgError(final Option option) {
+        System.err.println("Missing Argument: <" + option.getLongOpt() + "> " + option.getDescription());
     }
 }

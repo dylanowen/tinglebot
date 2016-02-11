@@ -17,6 +17,7 @@ import com.sun.deploy.util.StringUtils;
  */
 public abstract class Trainer {
 
+    protected static final int GRAM_SIZE = 3;
     private static final Pattern INVALID_CHARS = Pattern.compile("[^a-zA-Z0-9'!?.]");
 
     public abstract Brain train();

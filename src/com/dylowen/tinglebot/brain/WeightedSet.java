@@ -1,5 +1,7 @@
 package com.dylowen.tinglebot.brain;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.io.Serializable;
 import java.util.Random;
 
@@ -12,11 +14,12 @@ import gnu.trove.map.hash.TObjectIntHashMap;
  * @author dylan.owen
  * @since Feb-2016
  */
-class WeightedSet<T> implements Serializable {
+class WeightedSet<T>
+    implements Serializable {
     private final TObjectIntHashMap<T> map = new TObjectIntHashMap<>();
     private int total = 0;
 
-    private final transient Random rand = new Random();
+    private transient Random rand = new Random();
 
     public void add(final T obj) {
         this.map.adjustOrPutValue(obj, 1, 1);
@@ -61,5 +64,11 @@ class WeightedSet<T> implements Serializable {
         }
 
         return sb.toString();
+    }
+
+    private void readObject(final ObjectInputStream stream)
+            throws IOException, ClassNotFoundException {
+        stream.defaultReadObject();
+        this.rand = new Random();
     }
 }

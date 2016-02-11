@@ -22,12 +22,10 @@ public class SkypeDatabaseTrainer
     extends Trainer {
 
     private final Settings settings;
-    private final int gramSize;
 
-    public SkypeDatabaseTrainer(final String dbSettingsPath, final int gramSize) {
+    public SkypeDatabaseTrainer(final String dbSettingsPath) {
         try {
             this.settings = Json.get().getObjectMapper().readValue(new File(dbSettingsPath), Settings.class);
-            this.gramSize = gramSize;
 
             //make sure we can get the native libraries
             SQLite.getSQLiteVersion();
@@ -41,7 +39,7 @@ public class SkypeDatabaseTrainer
     @Override
     public Brain train() {
         final Timer timer = new Timer();
-        final Brain brain = new Brain(this.gramSize);
+        final Brain brain = new Brain(GRAM_SIZE);
 
         final SQLiteConnection db = new SQLiteConnection(new File(this.settings.dbPath));
 
@@ -83,7 +81,7 @@ public class SkypeDatabaseTrainer
             }
         }
         catch (SQLiteException e) {
-            System.err.println("sql error: " + e.getMessage());
+            e.printStackTrace();
             throw new RuntimeException(e);
         }
         finally {

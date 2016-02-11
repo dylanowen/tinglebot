@@ -1,5 +1,9 @@
 package com.dylowen.tinglebot.brain;
 
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -24,7 +28,7 @@ public class Brain
     private final Map<NGram, WeightedSet<String>> dictionary = new HashMap<>();
     private final int gramSize;
 
-    private final transient Random rand = new Random();
+    private transient Random rand = new Random();
     private transient Map.Entry<NGram, WeightedSet<String>>[] cachedEntryArray = null;
     private transient LinkedList<String> input = null;
 
@@ -93,7 +97,8 @@ public class Brain
         do {
             nextWord = getNextWord(sentence);
             sentence.add(nextWord);
-        } while (GenericWordType.getType(nextWord) != GenericWordType.END_SENTENCE && sentence.size() < MAX_WORDS_IN_SENTENCE);
+        } while (GenericWordType.getType(nextWord) != GenericWordType.END_SENTENCE
+                && sentence.size() < MAX_WORDS_IN_SENTENCE);
         System.out.println(GenericWordType.getType(nextWord).name() + " " + nextWord);
     }
 
@@ -105,9 +110,10 @@ public class Brain
         do {
             final NGram operatingGram = new NGram(operatingList);
             set = this.dictionary.get(operatingGram);
-            
+
             System.out.println(operatingGram.toString() + ((set != null) ? " [" + set.toString() + "]" : ""));
-            System.out.println(operatingList.size() + " " + ((set != null) ? set.size() + " " : "") + (operatingList.size() > MIN_GRAM_SIZE) + " " + (set == null || set.size() <= 1));
+            System.out.println(operatingList.size() + " " + ((set != null) ? set.size() + " " : "")
+                    + (operatingList.size() > MIN_GRAM_SIZE) + " " + (set == null || set.size() <= 1));
 
             operatingList.remove(0);
             //loop if we get a null set or the set size is uninteresting and we still have an operating list
@@ -136,7 +142,7 @@ public class Brain
         Map.Entry<NGram, WeightedSet<String>> entry;
         do {
             entry = this.cachedEntryArray[this.rand.nextInt(this.cachedEntryArray.length)];
-        } while(entry.getKey().getWords().size() < this.gramSize);
+        } while (entry.getKey().getWords().size() < this.gramSize);
 
         return entry;
     }
@@ -154,62 +160,28 @@ public class Brain
         return sb.toString();
     }
 
-    /*
-    public void add(final String... words) {
-        final NGram nGram = new NGram(Arrays.copyOfRange(words, 0, words.length - 1));
-        final String word = words[words.length - 1];
-    
-        WeightedSet<String> set = this.dictionary.get(nGram);
-        if (set == null) {
-            set = new WeightedSet<>();
-            this.dictionary.put(nGram, set);
-        }
-        else {
-            //System.out.println(nGram.toString() + " [" + set.toString() + "]");
-        }
-        set.add(word);
-    }
-    
-    public void add(final List<String> words) {
-        add(words.toArray(new String[words.size()]));
-    }
-    */
-
-    /*
-    public LinkedList<String> start() {
-        @SuppressWarnings("unchecked")
-        Map.Entry<NGram, WeightedSet<String>> entry =
-    
-        System.out.println(entry.getKey().toString() + " [" + entry.getValue().toString() + "]");
-    
-        LinkedList<String> sentenceStart = new LinkedList<>();
-        Collections.addAll(sentenceStart, entry.getKey().getWords());
-    
-        sentenceStart.add(entry.getValue().get());
-    
-        return sentenceStart;
-    }
-    
-    public String get(final List<String> words) {
-        return get(words.toArray(new String[words.size()]));
-    }
-    
-    public String get(final String... words) {
-        final NGram nGram = new NGram(words);
-    
-        final WeightedSet<String> set = this.dictionary.get(nGram);
-        if (set != null) {
-            System.out.println(nGram.toString() + " [" + set.toString() + "]");
-    
-            return set.get();
-        }
-        else {
-            return END_STRING;
-        }
-    }
-    */
-
     public int stateCount() {
         return this.dictionary.size();
+    }
+
+    public void export(final String exportPath) {
+        try {
+            FileOutputStream fileOut = new FileOutputStream(exportPath);
+            ObjectOutputStream out = new ObjectOutputStream(fileOut);
+            out.writeObject(this);
+            out.close();
+            fileOut.close();
+            System.out.println("Serialized brain is saved in: " + exportPath);
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void readObject(final ObjectInputStream stream)
+            throws IOException, ClassNotFoundException {
+        stream.defaultReadObject();
+        this.rand = new Random();
     }
 }

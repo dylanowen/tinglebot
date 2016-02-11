@@ -24,17 +24,15 @@ public class TextTrainer
     extends Trainer {
 
     private final String filePath;
-    private final int gramSize;
 
-    public TextTrainer(final String filePath, final int gramSize) {
+    public TextTrainer(final String filePath) {
         this.filePath = filePath;
-        this.gramSize = gramSize;
     }
 
     @Override
     public Brain train() {
         final Timer timer = new Timer();
-        final Brain brain = new Brain(this.gramSize);
+        final Brain brain = new Brain(GRAM_SIZE);
 
         try {
             // FileReader reads text files in the default encoding.
@@ -53,25 +51,10 @@ public class TextTrainer
             System.out.println("Brain feed time: " + timer.getS() + "s");
         }
         catch (Exception e) {
-            System.out.println(e.getMessage());
+            e.printStackTrace();
             throw new RuntimeException(e);
         }
 
         return brain;
     }
-
-    /*
-    @Override
-    protected String readLine(final BufferedReader buffer)
-            throws IOException {
-
-        String str = super.readLine(buffer);
-
-        return str;
-    }
-    */
-
-
-
-
 }
