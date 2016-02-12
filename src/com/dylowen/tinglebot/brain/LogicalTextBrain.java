@@ -15,6 +15,7 @@ public class LogicalTextBrain extends TextBrain {
         super(gramSize);
     }
 
+    //TODO some of this isn't very extensible, Brain should be refactored slightly
     @Override
     public void compress() {
         final Iterator<Map.Entry<NGram<String>, WeightedSet<String>>> it = this.dictionary.entrySet().iterator();
