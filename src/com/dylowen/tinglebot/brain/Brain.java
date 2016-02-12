@@ -1,6 +1,10 @@
 package com.dylowen.tinglebot.brain;
 
+import com.dylowen.tinglebot.Timer;
+
+import java.io.BufferedReader;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -99,7 +103,7 @@ public class Brain
             sentence.add(nextWord);
         } while (GenericWordType.getType(nextWord) != GenericWordType.END_SENTENCE
                 && sentence.size() < MAX_WORDS_IN_SENTENCE);
-        System.out.println(GenericWordType.getType(nextWord).name() + " " + nextWord);
+        //System.out.println(GenericWordType.getType(nextWord).name() + " " + nextWord);
     }
 
     private String getNextWord(final LinkedList<String> input) {
@@ -111,9 +115,9 @@ public class Brain
             final NGram operatingGram = new NGram(operatingList);
             set = this.dictionary.get(operatingGram);
 
-            System.out.println(operatingGram.toString() + ((set != null) ? " [" + set.toString() + "]" : ""));
-            System.out.println(operatingList.size() + " " + ((set != null) ? set.size() + " " : "")
-                    + (operatingList.size() > MIN_GRAM_SIZE) + " " + (set == null || set.size() <= 1));
+            //System.out.println(operatingGram.toString() + ((set != null) ? " [" + set.toString() + "]" : ""));
+            //System.out.println(operatingList.size() + " " + ((set != null) ? set.size() + " " : "")
+            //        + (operatingList.size() > MIN_GRAM_SIZE) + " " + (set == null || set.size() <= 1));
 
             operatingList.remove(0);
             //loop if we get a null set or the set size is uninteresting and we still have an operating list
@@ -165,6 +169,8 @@ public class Brain
     }
 
     public void export(final String exportPath) {
+        final Timer timer = new Timer();
+
         try {
             FileOutputStream fileOut = new FileOutputStream(exportPath);
             ObjectOutputStream out = new ObjectOutputStream(fileOut);
@@ -177,6 +183,8 @@ public class Brain
             e.printStackTrace();
             throw new RuntimeException(e);
         }
+
+        System.out.println("Brain export time: " + timer.getS() + "s");
     }
 
     private void readObject(final ObjectInputStream stream)

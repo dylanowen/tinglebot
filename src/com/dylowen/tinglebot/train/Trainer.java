@@ -3,11 +3,9 @@ package com.dylowen.tinglebot.train;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import com.dylowen.tinglebot.brain.Brain;
-import com.sun.deploy.util.StringUtils;
 
 /**
  * TODO add description
@@ -18,7 +16,6 @@ import com.sun.deploy.util.StringUtils;
 public abstract class Trainer {
 
     protected static final int GRAM_SIZE = 3;
-    private static final Pattern INVALID_CHARS = Pattern.compile("[^a-zA-Z0-9'!?.]");
 
     public abstract Brain train();
 
@@ -27,32 +24,29 @@ public abstract class Trainer {
                 word -> !(word.startsWith("http") || word.length() == 0)).collect(Collectors.toList());
         final List<String> cleanWords = new ArrayList<>();
 
-        for (String word : dirtyWords) {
+        for (String dirtyWord : dirtyWords) {
             final StringBuilder sb = new StringBuilder();
-            boolean emoji = '(' == word.charAt(0) && ')' == word.charAt(word.length() - 1);
+            boolean emoji = '(' == dirtyWord.charAt(0) && ')' == dirtyWord.charAt(dirtyWord.length() - 1);
             if (emoji) {
                 sb.append("(");
             }
 
             boolean foundEnd = false;
-            for (int i = 0; i < word.length() - 1; i++) {
-                final char c = word.charAt(i);
-                if (Character.isAlphabetic(c) || Character.isDigit(c) || '\'' == c) {
+            for (int i = 0; i < dirtyWord.length() - 1; i++) {
+                final char c = dirtyWord.charAt(i);
+                if (isCharValid(c)) {
                     sb.append(c);
-                }
-                else if ('!' == c || '?' == c || '.' == c) {
-                    foundEnd = true;
-                    sb.append(c);
+
+                    if (isCharEnd(c)) {
+                        foundEnd = true;
+                    }
                 }
             }
 
             String nextWord = null;
-            final char c = word.charAt(word.length() - 1);
-            if (Character.isAlphabetic(c) || Character.isDigit(c) || '\'' == c) {
-                sb.append(c);
-            }
-            else if ('!' == c || '?' == c || '.' == c) {
-                if (foundEnd) {
+            final char c = dirtyWord.charAt(dirtyWord.length() - 1);
+            if (isCharValid(c)) {
+                if (!isCharEnd(c) || foundEnd) {
                     sb.append(c);
                 }
                 else {
@@ -64,12 +58,22 @@ public abstract class Trainer {
                 sb.append(")");
             }
 
-            cleanWords.add(sb.toString());
+            if (sb.length() > 0) {
+                cleanWords.add(sb.toString());
+            }
             if (nextWord != null) {
                 cleanWords.add(nextWord);
             }
         }
 
         return cleanWords;
+    }
+
+    private static boolean isCharEnd(final char c) {
+        return '!' == c || '?' == c || '.' == c;
+    }
+
+    private static boolean isCharValid(final char c) {
+        return Character.isAlphabetic(c) || Character.isDigit(c) || '\'' == c || ':' == c || isCharEnd(c);
     }
 }

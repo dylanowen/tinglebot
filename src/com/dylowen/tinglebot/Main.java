@@ -86,17 +86,20 @@ public class Main {
                 brain.export(exportPath);
             }
 
-            final StringBuilder sb = new StringBuilder();
+            final Timer timer = new Timer();
+            for (int i = 0; i < 10; i++) {
+                final StringBuilder sb = new StringBuilder();
 
-            List<String> sentence = brain.getSentenceWords();
-            sb.append(Brain.concatSentence(sentence));
-            while (sb.length() < 140) {
-                sb.append("\n");
-                sentence = brain.getSentenceWords();
+                List<String> sentence = brain.getSentenceWords();
                 sb.append(Brain.concatSentence(sentence));
+                while (sb.length() < 140) {
+                    sb.append("\n");
+                    sentence = brain.getSentenceWords();
+                    sb.append(Brain.concatSentence(sentence));
+                }
+                System.out.println(sb.toString() + "\n");
             }
-
-            System.out.println(sb.toString());
+            System.out.println("sentence generation time: " + timer.getS() + "s");
         }
         catch (MissingOptionException e) {
             for (Object o : e.getMissingOptions()) {
