@@ -3,6 +3,7 @@ package com.dylowen.tinglebot.train;
 import java.io.File;
 import java.io.IOException;
 
+import com.dylowen.tinglebot.brain.LogicalTextBrain;
 import org.apache.commons.lang3.StringEscapeUtils;
 
 import com.almworks.sqlite4java.SQLite;
@@ -40,7 +41,7 @@ public class SkypeDatabaseTrainer
     @Override
     public TextBrain train() {
         final Timer timer = new Timer();
-        final TextBrain brain = new TextBrain(GRAM_SIZE);
+        final TextBrain brain = new LogicalTextBrain(GRAM_SIZE);
 
         final SQLiteConnection db = new SQLiteConnection(new File(this.settings.dbPath));
 
@@ -71,6 +72,10 @@ public class SkypeDatabaseTrainer
                 }
 
                 System.out.println("Brain stateCount: " + brain.stateCount());
+
+                brain.compress();
+
+                System.out.println("Brain stateCount: " + brain.stateCount() + " after compression");
                 System.out.println("Brain feed time: " + timer.getS() + "s");
             }
             catch (Exception e) {

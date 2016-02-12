@@ -24,6 +24,10 @@ class NGram<T>
         return this.words;
     }
 
+    public int size() {
+        return this.words.size();
+    }
+
     @Override
     public String toString() {
         final Iterator<T> it = this.words.listIterator();

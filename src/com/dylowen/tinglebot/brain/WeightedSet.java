@@ -7,6 +7,7 @@ import java.util.Random;
 
 import gnu.trove.iterator.TObjectIntIterator;
 import gnu.trove.map.hash.TObjectIntHashMap;
+import gnu.trove.procedure.TObjectIntProcedure;
 
 /**
  * TODO add description
@@ -22,9 +23,13 @@ class WeightedSet<T>
     private transient Random rand = new Random();
 
     public void add(final T obj) {
-        this.map.adjustOrPutValue(obj, 1, 1);
+        add(obj, 1);
+    }
 
-        this.total++;
+    public void add(final T obj, final int inc) {
+        this.map.adjustOrPutValue(obj, inc, inc);
+
+        this.total += inc;
     }
 
     public T get() {
@@ -42,6 +47,10 @@ class WeightedSet<T>
         }
 
         throw new AssertionError("we should never get here");
+    }
+
+    public void forEachEntry(TObjectIntProcedure<T> procedure) {
+        this.map.forEachEntry(procedure);
     }
 
     public int size() {

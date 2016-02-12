@@ -6,6 +6,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -24,10 +25,10 @@ import com.dylowen.tinglebot.Timer;
 public abstract class Brain<T, V>
     implements Serializable {
 
-    private transient static final int MIN_GRAM_SIZE = 2;
+    protected transient static final int MIN_GRAM_SIZE = 2;
 
-    private final Map<NGram<T>, WeightedSet<T>> dictionary = new HashMap<>();
-    private final int gramSize;
+    protected final Map<NGram<T>, WeightedSet<T>> dictionary = new HashMap<>();
+    protected int gramSize;
 
     private transient Random rand = new Random();
     private transient Map.Entry<NGram<T>, WeightedSet<T>>[] cachedEntryArray = null;
@@ -68,6 +69,8 @@ public abstract class Brain<T, V>
 
         this.input.removeFirst();
     }
+
+    public void compress() {}
 
     public V getSentence() {
         final List<T> words = getSentenceWords();
