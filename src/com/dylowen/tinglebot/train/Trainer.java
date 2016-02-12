@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import com.dylowen.tinglebot.brain.Brain;
+import com.dylowen.tinglebot.brain.TextBrain;
 
 /**
  * TODO add description
@@ -43,10 +44,11 @@ public abstract class Trainer<T extends Brain> {
                 }
             }
 
+            //TODO I really just want to capture ... and this kind of sucks for that
             String nextWord = null;
             final char c = dirtyWord.charAt(dirtyWord.length() - 1);
             if (isCharValid(c)) {
-                if (!isCharEnd(c) || foundEnd) {
+                if ((isCharEnd(c) && foundEnd) || (!isCharEnd(c) && !isCharPunctuation(c))){
                     sb.append(c);
                 }
                 else {
@@ -73,7 +75,17 @@ public abstract class Trainer<T extends Brain> {
         return '!' == c || '?' == c || '.' == c;
     }
 
+    private static boolean isCharPunctuation(final char c) {
+        return ',' == c || ';' == c;
+    }
+
     private static boolean isCharValid(final char c) {
-        return Character.isAlphabetic(c) || Character.isDigit(c) || '\'' == c || ':' == c || '$' == c || isCharEnd(c);
+        return Character.isAlphabetic(c)
+                || Character.isDigit(c)
+                || '\'' == c
+                || ':' == c
+                || '$' == c
+                || isCharEnd(c)
+                || isCharPunctuation(c);
     }
 }
