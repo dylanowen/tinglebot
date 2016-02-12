@@ -1,46 +1,43 @@
 package com.dylowen.tinglebot.brain;
 
-import com.dylowen.tinglebot.Timer;
-
-import java.io.BufferedReader;
 import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
+import com.dylowen.tinglebot.Timer;
+
 /**
- * TODO add description
+ * T the word type
+ * V the sentence type
  *
  * @author dylan.owen
  * @since Feb-2016
  */
-public class Brain
+public abstract class Brain<T, V>
     implements Serializable {
 
     private transient static final int MIN_GRAM_SIZE = 2;
-    private transient static final int MAX_WORDS_IN_SENTENCE = 100;
 
-    private final Map<NGram, WeightedSet<String>> dictionary = new HashMap<>();
+    private final Map<NGram<T>, WeightedSet<T>> dictionary = new HashMap<>();
     private final int gramSize;
 
     private transient Random rand = new Random();
-    private transient Map.Entry<NGram, WeightedSet<String>>[] cachedEntryArray = null;
-    private transient LinkedList<String> input = null;
+    private transient Map.Entry<NGram<T>, WeightedSet<T>>[] cachedEntryArray = null;
+    private transient LinkedList<T> input = null;
 
     public Brain(final int gramSize) {
         this.gramSize = gramSize;
     }
 
-    public void feed(final String word) {
+    public void feed(final T word) {
         if (this.input == null) {
             this.input = new LinkedList<>();
         }
@@ -54,10 +51,10 @@ public class Brain
 
         //create the NGrams
         for (int i = 0; i <= this.gramSize - MIN_GRAM_SIZE; i++) {
-            final List<String> subList = this.input.subList(i, this.input.size() - 1);
-            final NGram nGram = new NGram(subList);
+            final List<T> subList = this.input.subList(i, this.input.size() - 1);
+            final NGram<T> nGram = new NGram<>(subList);
 
-            WeightedSet<String> set = this.dictionary.get(nGram);
+            WeightedSet<T> set = this.dictionary.get(nGram);
             if (set == null) {
                 set = new WeightedSet<>();
 
@@ -72,23 +69,25 @@ public class Brain
         this.input.removeFirst();
     }
 
-    public String getSentence() {
-        final List<String> words = getSentenceWords();
+    public V getSentence() {
+        final List<T> words = getSentenceWords();
 
-        return Brain.concatSentence(words);
+        return concatSentence(words);
     }
 
-    public List<String> getSentenceWords() {
-        final Map.Entry<NGram, WeightedSet<String>> first = getRandomEntry();
+    public abstract V concatSentence(final List<T> words);
 
-        final LinkedList<String> sentence = new LinkedList<>(first.getKey().getWords());
+    public List<T> getSentenceWords() {
+        final Map.Entry<NGram<T>, WeightedSet<T>> first = getRandomEntry();
+
+        final LinkedList<T> sentence = new LinkedList<T>(first.getKey().getWords());
         continueSentence(sentence);
 
         return sentence;
     }
 
-    public List<String> getSentenceWords(final LinkedList<String> input) {
-        final LinkedList<String> sentence = new LinkedList<>(input.subList(input.size() - this.gramSize, input.size()));
+    public List<T> getSentenceWords(final LinkedList<T> input) {
+        final LinkedList<T> sentence = new LinkedList<>(input.subList(input.size() - this.gramSize, input.size()));
 
         continueSentence(sentence);
 
@@ -96,23 +95,24 @@ public class Brain
         return sentence.subList(this.gramSize - 1, sentence.size());
     }
 
-    private void continueSentence(final LinkedList<String> sentence) {
-        String nextWord;
+    private void continueSentence(final LinkedList<T> sentence) {
+        T nextWord;
         do {
             nextWord = getNextWord(sentence);
             sentence.add(nextWord);
-        } while (GenericWordType.getType(nextWord) != GenericWordType.END_SENTENCE
-                && sentence.size() < MAX_WORDS_IN_SENTENCE);
+        } while (shouldContinueSentence(nextWord, sentence));
         //System.out.println(GenericWordType.getType(nextWord).name() + " " + nextWord);
     }
 
-    private String getNextWord(final LinkedList<String> input) {
-        final int startIndex = (this.gramSize > input.size()) ? 0 : input.size() - this.gramSize;
-        final List<String> operatingList = new LinkedList<>(input.subList(startIndex, input.size()));
+    protected abstract boolean shouldContinueSentence(final T nextWord, final LinkedList<T> sentence);
 
-        WeightedSet<String> set;
+    protected T getNextWord(final LinkedList<T> input) {
+        final int startIndex = (this.gramSize > input.size()) ? 0 : input.size() - this.gramSize;
+        final List<T> operatingList = new LinkedList<>(input.subList(startIndex, input.size()));
+
+        WeightedSet<T> set;
         do {
-            final NGram operatingGram = new NGram(operatingList);
+            final NGram operatingGram = new NGram<>(operatingList);
             set = this.dictionary.get(operatingGram);
 
             //System.out.println(operatingGram.toString() + ((set != null) ? " [" + set.toString() + "]" : ""));
@@ -125,43 +125,30 @@ public class Brain
 
         //we've run out of stuff to say
         if (set == null) {
-            return ".";
+            return null;
         }
 
         return set.get();
     }
 
     //this could be better
-    private Map.Entry<NGram, WeightedSet<String>> getRandomEntry() {
+    private Map.Entry<NGram<T>, WeightedSet<T>> getRandomEntry() {
         if (this.cachedEntryArray == null || this.cachedEntryArray.length != this.dictionary.size()) {
 
-            final Set<Map.Entry<NGram, WeightedSet<String>>> entrySet = this.dictionary.entrySet();
+            final Set<Map.Entry<NGram<T>, WeightedSet<T>>> entrySet = this.dictionary.entrySet();
             //TODO can I get rid of this unchecked?
             @SuppressWarnings("unchecked")
-            final Map.Entry<NGram, WeightedSet<String>>[] entryArray = new Map.Entry[entrySet.size()];
+            final Map.Entry<NGram<T>, WeightedSet<T>>[] entryArray = new Map.Entry[entrySet.size()];
 
             this.cachedEntryArray = entrySet.toArray(entryArray);
         }
 
-        Map.Entry<NGram, WeightedSet<String>> entry;
+        Map.Entry<NGram<T>, WeightedSet<T>> entry;
         do {
             entry = this.cachedEntryArray[this.rand.nextInt(this.cachedEntryArray.length)];
         } while (entry.getKey().getWords().size() < this.gramSize);
 
         return entry;
-    }
-
-    public static String concatSentence(final List<String> words) {
-        final StringBuilder sb = new StringBuilder();
-        final Iterator<String> it = words.listIterator();
-
-        GenericWordType.START_SENTENCE.appendSpacedWord(it.next(), sb);
-
-        while (it.hasNext()) {
-            GenericWordType.appendUntypedWord(it.next(), sb);
-        }
-
-        return sb.toString();
     }
 
     public int stateCount() {

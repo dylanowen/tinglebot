@@ -12,7 +12,6 @@ public enum GenericWordType implements WordType {
     PUNCTUATION(false),
     END_SENTENCE(false);
 
-
     private final boolean leadingSpace;
 
     GenericWordType(final boolean leadingSpace) {
@@ -20,7 +19,7 @@ public enum GenericWordType implements WordType {
     }
 
     public String getSpacedWord(final String word) {
-        return ((this.leadingSpace) ? " " : "" ) + word;
+        return ((this.leadingSpace) ? " " : "") + word;
     }
 
     public void appendSpacedWord(final String word, final StringBuilder sb) {

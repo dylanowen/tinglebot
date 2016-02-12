@@ -13,8 +13,8 @@ import com.dylowen.tinglebot.brain.Brain;
  * @author dylan.owen
  * @since Feb-2016
  */
-public class SerializedBrainTrainer
-    extends Trainer {
+public class SerializedBrainTrainer<T extends Brain>
+    extends Trainer<T> {
 
     private final String filePath;
 
@@ -23,12 +23,12 @@ public class SerializedBrainTrainer
     }
 
     @Override
-    public Brain train() {
+    public T train() {
         final Timer timer = new Timer();
-        final Brain brain;
+        final T brain;
 
         try (FileInputStream fileIn = new FileInputStream(this.filePath); ObjectInputStream in = new ObjectInputStream(fileIn)) {
-            brain = (Brain) in.readObject();
+            brain = (T) in.readObject();
 
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();

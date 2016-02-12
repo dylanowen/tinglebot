@@ -2,7 +2,6 @@ package com.dylowen.tinglebot;
 
 import java.util.List;
 
-import com.dylowen.tinglebot.train.SerializedBrainTrainer;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
@@ -12,7 +11,8 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
-import com.dylowen.tinglebot.brain.Brain;
+import com.dylowen.tinglebot.brain.TextBrain;
+import com.dylowen.tinglebot.train.SerializedBrainTrainer;
 import com.dylowen.tinglebot.train.SkypeDatabaseTrainer;
 import com.dylowen.tinglebot.train.TextTrainer;
 import com.dylowen.tinglebot.train.Trainer;
@@ -65,7 +65,7 @@ public class Main {
             final int extensionIndex = path.lastIndexOf('.');
             final String extension = (extensionIndex < 0) ? "" : path.substring(extensionIndex + 1);
 
-            final Trainer trainer;
+            final Trainer<TextBrain> trainer;
             if ("json".equals(extension)) {
                 trainer = new SkypeDatabaseTrainer(path);
             }
@@ -73,13 +73,13 @@ public class Main {
                 trainer = new TextTrainer(path);
             }
             else if ("brain".equals(extension)) {
-                trainer = new SerializedBrainTrainer(path);
+                trainer = new SerializedBrainTrainer<>(path);
             }
             else {
                 throw new UnsupportedOperationException("Unknown file type");
             }
 
-            final Brain brain = trainer.train();
+            final TextBrain brain = trainer.train();
 
             //check if we should export the brain
             if (exportPath != null) {
@@ -91,11 +91,11 @@ public class Main {
                 final StringBuilder sb = new StringBuilder();
 
                 List<String> sentence = brain.getSentenceWords();
-                sb.append(Brain.concatSentence(sentence));
+                sb.append(brain.concatSentence(sentence));
                 while (sb.length() < 140) {
                     sb.append("\n");
                     sentence = brain.getSentenceWords();
-                    sb.append(Brain.concatSentence(sentence));
+                    sb.append(brain.concatSentence(sentence));
                 }
                 System.out.println(sb.toString() + "\n");
             }

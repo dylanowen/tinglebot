@@ -2,17 +2,9 @@ package com.dylowen.tinglebot.train;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
 
 import com.dylowen.tinglebot.Timer;
-import org.apache.commons.lang3.StringEscapeUtils;
-
-import com.dylowen.tinglebot.brain.Brain;
+import com.dylowen.tinglebot.brain.TextBrain;
 
 /**
  * TODO add description
@@ -21,7 +13,7 @@ import com.dylowen.tinglebot.brain.Brain;
  * @since Feb-2016
  */
 public class TextTrainer
-    extends Trainer {
+    extends Trainer<TextBrain> {
 
     private final String filePath;
 
@@ -30,9 +22,9 @@ public class TextTrainer
     }
 
     @Override
-    public Brain train() {
+    public TextBrain train() {
         final Timer timer = new Timer();
-        final Brain brain = new Brain(GRAM_SIZE);
+        final TextBrain brain = new TextBrain(GRAM_SIZE);
 
         try {
             // FileReader reads text files in the default encoding.

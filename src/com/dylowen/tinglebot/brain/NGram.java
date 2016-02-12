@@ -11,27 +11,27 @@ import java.util.List;
  * @author dylan.owen
  * @since Feb-2016
  */
-class NGram
+class NGram<T>
     implements Serializable {
-    private final List<String> words;
+    private final List<T> words;
 
-    NGram(final List<String> words) {
+    NGram(final List<T> words) {
         //defensively copy
-        this.words = new LinkedList(words);
+        this.words = new LinkedList<>(words);
     }
 
-    public List<String> getWords() {
+    public List<T> getWords() {
         return this.words;
     }
 
     @Override
     public String toString() {
-        final Iterator<String> it = this.words.listIterator();
-        final StringBuilder sb = new StringBuilder(it.next());
+        final Iterator<T> it = this.words.listIterator();
+        final StringBuilder sb = new StringBuilder(it.next().toString());
 
         while (it.hasNext()) {
             sb.append(" ");
-            sb.append(it.next());
+            sb.append(it.next().toString());
         }
 
         return sb.toString();

@@ -13,11 +13,11 @@ import com.dylowen.tinglebot.brain.Brain;
  * @author dylan.owen
  * @since Feb-2016
  */
-public abstract class Trainer {
+public abstract class Trainer<T extends Brain> {
 
-    protected static final int GRAM_SIZE = 3;
+    protected static final int GRAM_SIZE = 4;
 
-    public abstract Brain train();
+    public abstract T train();
 
     public static List<String> wordsFromLine(String line) {
         final List<String> dirtyWords = Arrays.asList(line.split(" ")).parallelStream().filter(
@@ -74,6 +74,6 @@ public abstract class Trainer {
     }
 
     private static boolean isCharValid(final char c) {
-        return Character.isAlphabetic(c) || Character.isDigit(c) || '\'' == c || ':' == c || isCharEnd(c);
+        return Character.isAlphabetic(c) || Character.isDigit(c) || '\'' == c || ':' == c || '$' == c || isCharEnd(c);
     }
 }

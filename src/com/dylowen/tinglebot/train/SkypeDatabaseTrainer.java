@@ -3,14 +3,15 @@ package com.dylowen.tinglebot.train;
 import java.io.File;
 import java.io.IOException;
 
+import org.apache.commons.lang3.StringEscapeUtils;
+
 import com.almworks.sqlite4java.SQLite;
 import com.almworks.sqlite4java.SQLiteConnection;
 import com.almworks.sqlite4java.SQLiteException;
 import com.almworks.sqlite4java.SQLiteStatement;
 import com.dylowen.tinglebot.Json;
 import com.dylowen.tinglebot.Timer;
-import com.dylowen.tinglebot.brain.Brain;
-import org.apache.commons.lang3.StringEscapeUtils;
+import com.dylowen.tinglebot.brain.TextBrain;
 
 /**
  * TODO add description
@@ -19,7 +20,7 @@ import org.apache.commons.lang3.StringEscapeUtils;
  * @since Feb-2016
  */
 public class SkypeDatabaseTrainer
-    extends Trainer {
+    extends Trainer<TextBrain> {
 
     private final Settings settings;
 
@@ -37,9 +38,9 @@ public class SkypeDatabaseTrainer
     }
 
     @Override
-    public Brain train() {
+    public TextBrain train() {
         final Timer timer = new Timer();
-        final Brain brain = new Brain(GRAM_SIZE);
+        final TextBrain brain = new TextBrain(GRAM_SIZE);
 
         final SQLiteConnection db = new SQLiteConnection(new File(this.settings.dbPath));
 
