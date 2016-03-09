@@ -11,11 +11,11 @@ import java.util.List;
  * @author dylan.owen
  * @since Feb-2016
  */
-class NGram<T>
+class NGramJava<T>
     implements Serializable {
     private final List<T> words;
 
-    NGram(final List<T> words) {
+    NGramJava(final List<T> words) {
         //defensively copy
         this.words = new LinkedList<>(words);
     }
@@ -51,11 +51,11 @@ class NGram<T>
         if (object == this) {
             return true;
         }
-        if (!(object instanceof NGram)) {
+        if (!(object instanceof NGramJava)) {
             return false;
         }
 
-        return this.words.equals(((NGram) object).getWords());
+        return this.words.equals(((NGramJava) object).getWords());
 
         //TODO compare without capitalization?
     }

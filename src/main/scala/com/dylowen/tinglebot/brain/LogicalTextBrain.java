@@ -18,10 +18,10 @@ public class LogicalTextBrain extends TextBrain {
     //TODO some of this isn't very extensible, Brain should be refactored slightly
     @Override
     public void compress() {
-        final Iterator<Map.Entry<NGram<String>, WeightedSet<String>>> it = this.dictionary.entrySet().iterator();
+        final Iterator<Map.Entry<NGramJava<String>, WeightedSet<String>>> it = this.dictionary.entrySet().iterator();
         while (it.hasNext()) {
-            final Map.Entry<NGram<String>, WeightedSet<String>> entry = it.next();
-            final NGram<String> nGram = entry.getKey();
+            final Map.Entry<NGramJava<String>, WeightedSet<String>> entry = it.next();
+            final NGramJava<String> nGram = entry.getKey();
 
             //only compress things above the min gram size
             if (nGram.size() > MIN_GRAM_SIZE) {
@@ -41,9 +41,9 @@ public class LogicalTextBrain extends TextBrain {
         this.gramSize = MIN_GRAM_SIZE;
     }
 
-    private WeightedSet<String> getMinGramSet(final NGram<String> gram) {
+    private WeightedSet<String> getMinGramSet(final NGramJava<String> gram) {
         final List<String> subList = gram.getWords().subList(gram.size() - MIN_GRAM_SIZE, gram.size());
-        final NGram<String> minGram = new NGram<>(subList);
+        final NGramJava<String> minGram = new NGramJava<>(subList);
 
         return this.dictionary.get(minGram);
     }

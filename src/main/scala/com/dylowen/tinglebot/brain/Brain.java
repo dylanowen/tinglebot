@@ -6,7 +6,6 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -27,11 +26,11 @@ public abstract class Brain<T, V>
 
     protected transient static final int MIN_GRAM_SIZE = 2;
 
-    protected final Map<NGram<T>, WeightedSet<T>> dictionary = new HashMap<>();
+    protected final Map<NGramJava<T>, WeightedSet<T>> dictionary = new HashMap<>();
     protected int gramSize;
 
     private transient Random rand = new Random();
-    private transient Map.Entry<NGram<T>, WeightedSet<T>>[] cachedEntryArray = null;
+    private transient Map.Entry<NGramJava<T>, WeightedSet<T>>[] cachedEntryArray = null;
     private transient LinkedList<T> input = null;
 
     public Brain(final int gramSize) {
@@ -53,7 +52,7 @@ public abstract class Brain<T, V>
         //create the NGrams
         for (int i = 0; i <= this.gramSize - MIN_GRAM_SIZE; i++) {
             final List<T> subList = this.input.subList(i, this.input.size() - 1);
-            final NGram<T> nGram = new NGram<>(subList);
+            final NGramJava<T> nGram = new NGramJava<>(subList);
 
             WeightedSet<T> set = this.dictionary.get(nGram);
             if (set == null) {
@@ -81,7 +80,7 @@ public abstract class Brain<T, V>
     public abstract V concatSentence(final List<T> words);
 
     public List<T> getSentenceWords() {
-        final Map.Entry<NGram<T>, WeightedSet<T>> first = getRandomEntry();
+        final Map.Entry<NGramJava<T>, WeightedSet<T>> first = getRandomEntry();
 
         final LinkedList<T> sentence = new LinkedList<T>(first.getKey().getWords());
         continueSentence(sentence);
@@ -115,7 +114,7 @@ public abstract class Brain<T, V>
 
         WeightedSet<T> set;
         do {
-            final NGram operatingGram = new NGram<>(operatingList);
+            final NGramJava operatingGram = new NGramJava<>(operatingList);
             set = this.dictionary.get(operatingGram);
 
             //System.out.println(operatingGram.toString() + ((set != null) ? " [" + set.toString() + "]" : ""));
@@ -135,18 +134,18 @@ public abstract class Brain<T, V>
     }
 
     //this could be better
-    private Map.Entry<NGram<T>, WeightedSet<T>> getRandomEntry() {
+    private Map.Entry<NGramJava<T>, WeightedSet<T>> getRandomEntry() {
         if (this.cachedEntryArray == null || this.cachedEntryArray.length != this.dictionary.size()) {
 
-            final Set<Map.Entry<NGram<T>, WeightedSet<T>>> entrySet = this.dictionary.entrySet();
+            final Set<Map.Entry<NGramJava<T>, WeightedSet<T>>> entrySet = this.dictionary.entrySet();
             //TODO can I get rid of this unchecked?
             @SuppressWarnings("unchecked")
-            final Map.Entry<NGram<T>, WeightedSet<T>>[] entryArray = new Map.Entry[entrySet.size()];
+            final Map.Entry<NGramJava<T>, WeightedSet<T>>[] entryArray = new Map.Entry[entrySet.size()];
 
             this.cachedEntryArray = entrySet.toArray(entryArray);
         }
 
-        Map.Entry<NGram<T>, WeightedSet<T>> entry;
+        Map.Entry<NGramJava<T>, WeightedSet<T>> entry;
         do {
             entry = this.cachedEntryArray[this.rand.nextInt(this.cachedEntryArray.length)];
         } while (entry.getKey().getWords().size() < this.gramSize);
