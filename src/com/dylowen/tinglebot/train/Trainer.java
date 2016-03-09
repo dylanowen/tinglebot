@@ -85,6 +85,7 @@ public abstract class Trainer<T extends Brain> {
                 || '\'' == c
                 || ':' == c
                 || '$' == c
+                || '#' == c
                 || isCharEnd(c)
                 || isCharPunctuation(c);
     }
