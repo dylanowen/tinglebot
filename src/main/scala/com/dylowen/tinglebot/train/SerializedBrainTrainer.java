@@ -6,7 +6,6 @@ import java.io.ObjectInputStream;
 
 import com.dylowen.tinglebot.Timer;
 import com.dylowen.tinglebot.brain.Brain;
-import com.dylowen.tinglebot.brain.BrainJava;
 
 /**
  * TODO add description
@@ -28,10 +27,12 @@ public class SerializedBrainTrainer<T extends Brain>
         final Timer timer = new Timer();
         final T brain;
 
-        try (FileInputStream fileIn = new FileInputStream(this.filePath); ObjectInputStream in = new ObjectInputStream(fileIn)) {
+        try (FileInputStream fileIn = new FileInputStream(this.filePath);
+                ObjectInputStream in = new ObjectInputStream(fileIn)) {
             brain = (T) in.readObject();
 
-        } catch (IOException | ClassNotFoundException e) {
+        }
+        catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
             throw new RuntimeException(e);
         }
