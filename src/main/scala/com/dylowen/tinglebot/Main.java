@@ -88,7 +88,7 @@ public class Main {
             */
 
             final Timer timer = new Timer();
-            for (int i = 0; i < 1; i++) {
+            for (int i = 0; i < 10; i++) {
                 final StringBuilder sb = new StringBuilder();
 
                 List<String> sentence = brain.getSentenceWords();

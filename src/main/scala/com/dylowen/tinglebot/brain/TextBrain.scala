@@ -6,7 +6,7 @@ package com.dylowen.tinglebot.brain
   * @author dylan.owen
   * @since Mar-2016
   */
-abstract class TextBrain(private val gramSize: Integer) extends Brain[String, String](gramSize) {
+abstract class TextBrain(gramSize: Integer) extends Brain[String, String](gramSize) {
 
   @transient
   private val MAX_WORDS_IN_SENTENCE: Integer = 50

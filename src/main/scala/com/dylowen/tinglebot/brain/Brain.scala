@@ -9,7 +9,7 @@ import scala.util.Random
   * @author dylan.owen
   * @since Mar-2016
   */
-abstract class Brain[T, V](private val gramSize: Integer) extends Serializable {
+abstract class Brain[T, V](protected var gramSize: Integer) extends Serializable {
 
   @transient
   protected val MIN_GRAM_SIZE: Integer = 2
