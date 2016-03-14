@@ -6,6 +6,7 @@ import java.io.ObjectInputStream;
 
 import com.dylowen.tinglebot.Timer;
 import com.dylowen.tinglebot.brain.Brain;
+import com.dylowen.tinglebot.brain.BrainJava;
 
 /**
  * TODO add description

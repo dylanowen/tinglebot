@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 
 import com.dylowen.tinglebot.Timer;
+import com.dylowen.tinglebot.brain.LogicalTextBrain;
 import com.dylowen.tinglebot.brain.TextBrain;
 
 /**
@@ -24,7 +25,7 @@ public class TextTrainer
     @Override
     public TextBrain train() {
         final Timer timer = new Timer();
-        final TextBrain brain = new TextBrain(GRAM_SIZE);
+        final TextBrain brain = new LogicalTextBrain(GRAM_SIZE);
 
         try {
             // FileReader reads text files in the default encoding.
@@ -40,6 +41,10 @@ public class TextTrainer
             timer.stop();
 
             System.out.println("Brain stateCount: " + brain.stateCount());
+
+            brain.compress();
+
+            System.out.println("Brain stateCount: " + brain.stateCount() + " after compression");
             System.out.println("Brain feed time: " + timer.getS() + "s");
         }
         catch (Exception e) {

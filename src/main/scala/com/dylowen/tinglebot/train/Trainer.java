@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import com.dylowen.tinglebot.brain.Brain;
-import com.dylowen.tinglebot.brain.TextBrain;
 
 /**
  * TODO add description
