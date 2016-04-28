@@ -13,7 +13,7 @@ import com.dylowen.tinglebot.brain.Brain;
  * @author dylan.owen
  * @since Feb-2016
  */
-public abstract class Trainer<T extends Brain> {
+public abstract class JavaTrainer<T extends Brain> {
 
     protected static final int GRAM_SIZE = 4;
 

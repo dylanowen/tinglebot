@@ -14,7 +14,7 @@ import com.dylowen.tinglebot.brain.Brain;
  * @since Feb-2016
  */
 public class SerializedBrainTrainer<T extends Brain>
-    extends Trainer<T> {
+    extends JavaTrainer<T> {
 
     private final String filePath;
 

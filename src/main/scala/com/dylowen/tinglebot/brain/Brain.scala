@@ -9,11 +9,11 @@ import scala.util.Random
   * @author dylan.owen
   * @since Mar-2016
   */
+object Brain {
+  val MIN_GRAM_SIZE: Integer = 2
+}
+
 abstract class Brain[T, V](protected var gramSize: Integer) extends Serializable {
-
-  @transient
-  protected val MIN_GRAM_SIZE: Integer = 2
-
   protected var dictionary: Map[NGram[T], WeightedSet[T]] = Map()
 
   //val dictionary: scala.collection.mutable.Map[NGram[T], WeightedSetJava[T]] = new mutable.HashMap[]()
@@ -26,7 +26,7 @@ abstract class Brain[T, V](protected var gramSize: Integer) extends Serializable
   def feed(word: T): Unit = {
     if (this.input.size >= this.gramSize) {
       var subList: List[T] = this.input
-      for (i <- 0 to this.gramSize - MIN_GRAM_SIZE) {
+      for (i <- 0 to this.gramSize - Brain.MIN_GRAM_SIZE) {
         val nGram = new NGram[T](subList)
 
         val set = this.dictionary.get(nGram) match {
@@ -84,7 +84,7 @@ abstract class Brain[T, V](protected var gramSize: Integer) extends Serializable
 
       operatingList = operatingList.tail
       //loop if we get a null set or the set size is uninteresting and we still have an operating list
-    } while (operatingList.size > MIN_GRAM_SIZE - 1 && (set.isEmpty || set.exists(v => v.size <= 1)))
+    } while (operatingList.size > Brain.MIN_GRAM_SIZE - 1 && (set.isEmpty || set.exists(v => v.size <= 1)))
 
     set.map(v => v.get)
   }

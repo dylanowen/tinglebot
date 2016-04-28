@@ -9,7 +9,7 @@ package com.dylowen.tinglebot.brain
 trait LogicalBrain[T, V] extends Brain[T, V] {
   override def compress(): Unit = {
     //loop over all the nGrams larger than the minimum size
-    for ((nGram, set) <- this.dictionary if nGram.size > MIN_GRAM_SIZE) {
+    for ((nGram, set) <- this.dictionary if nGram.size > Brain.MIN_GRAM_SIZE) {
       //add the nGram we're stripping out to the min nGrams with some weight
       val minSet = getMinGramSet(nGram.words)
       val weight = nGram.size - 1
@@ -20,11 +20,11 @@ trait LogicalBrain[T, V] extends Brain[T, V] {
       this.dictionary -= nGram
     }
 
-    this.gramSize = MIN_GRAM_SIZE
+    this.gramSize = Brain.MIN_GRAM_SIZE
   }
 
   private def getMinGramSet(words: List[T]): WeightedSet[T] = {
-    val searchNGram = new NGram[T](words.slice(words.size - MIN_GRAM_SIZE, words.size))
+    val searchNGram = new NGram[T](words.slice(words.size - Brain.MIN_GRAM_SIZE, words.size))
     val minNGram = this.dictionary.get(searchNGram)
 
     if (minNGram.isDefined) {

@@ -13,7 +13,7 @@ import com.dylowen.tinglebot.brain.TextBrain;
 import com.dylowen.tinglebot.train.SerializedBrainTrainer;
 import com.dylowen.tinglebot.train.SkypeDatabaseTrainer;
 import com.dylowen.tinglebot.train.TextTrainer;
-import com.dylowen.tinglebot.train.Trainer;
+import com.dylowen.tinglebot.train.JavaTrainer;
 import scala.collection.immutable.List;
 
 /**
@@ -64,7 +64,7 @@ public class Main {
             final int extensionIndex = path.lastIndexOf('.');
             final String extension = (extensionIndex < 0) ? "" : path.substring(extensionIndex + 1);
 
-            final Trainer<TextBrain> trainer;
+            final JavaTrainer<TextBrain> trainer;
             if ("json".equals(extension)) {
                 trainer = new SkypeDatabaseTrainer(path);
             }

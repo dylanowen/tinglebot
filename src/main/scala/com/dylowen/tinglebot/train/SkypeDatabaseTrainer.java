@@ -21,7 +21,7 @@ import com.dylowen.tinglebot.brain.TextBrain;
  * @since Feb-2016
  */
 public class SkypeDatabaseTrainer
-    extends Trainer<TextBrain> {
+    extends JavaTrainer<TextBrain> {
 
     private final Settings settings;
 

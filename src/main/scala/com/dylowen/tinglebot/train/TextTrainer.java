@@ -14,7 +14,7 @@ import com.dylowen.tinglebot.brain.TextBrain;
  * @since Feb-2016
  */
 public class TextTrainer
-    extends Trainer<TextBrain> {
+    extends JavaTrainer<TextBrain> {
 
     private final String filePath;
 

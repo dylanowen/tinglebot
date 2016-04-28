@@ -7,9 +7,9 @@ package com.dylowen.tinglebot.brain
   * @since Mar-2016
   */
 class NGram[T](private val _words: List[T]) extends Serializable {
-  def words = this._words
+  val words = this._words
 
-  def size = this._words.size
+  val size = this._words.size
 
   override def toString: String = {
     val builder = StringBuilder.newBuilder
