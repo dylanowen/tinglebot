@@ -26,3 +26,6 @@ gradle-app.setting
 #ignore tingchat.txt if you store locally
 tingchat.txt
 data/
+
+## File-based project format:
+*.iws

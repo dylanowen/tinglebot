@@ -18,6 +18,10 @@
         <processorPath useClasspath="true" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="tinglebot_main" target="1.8" />
+      <module name="tinglebot_test" target="1.8" />
+    </bytecodeTargetLevel>
   </component>
   <component name="CopyrightManager" default="" />
   <component name="EclipseCodeFormatter">
@@ -185,7 +189,9 @@
   </component>
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/tinglebot.iml" filepath="$PROJECT_DIR$/tinglebot.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/tinglebot.iml" filepath="$PROJECT_DIR$/.idea/modules/tinglebot.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/tinglebot_main.iml" filepath="$PROJECT_DIR$/.idea/modules/tinglebot_main.iml" group="tinglebot" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/tinglebot_test.iml" filepath="$PROJECT_DIR$/.idea/modules/tinglebot_test.iml" group="tinglebot" />
     </modules>
   </component>
   <component name="ProjectRootManager" version="2" languageLevel="JDK_1_8" default="false" assert-keyword="true" jdk-15="true" project-jdk-name="1.8" project-jdk-type="JavaSDK">
@@ -204,7 +210,7 @@
     <mapping directory="" vcs="Git" />
   </component>
   <component name="libraryTable">
-    <library name="Gradle: com.almworks.sqlite4java:libsqlite4java-osx:1.0.392:dylib">
+    <library name="Gradle: com.almworks.sqlite4java:libsqlite4java-osx:dylib:1.0.392">
       <CLASSES>
         <root url="file://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.almworks.sqlite4java/libsqlite4java-osx/1.0.392/de9528513a20ceae197ce9e14690973d617233bb/libsqlite4java-osx-1.0.392.dylib" />
       </CLASSES>
@@ -245,6 +251,24 @@
       <JAVADOC />
       <SOURCES>
         <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.fasterxml.jackson.core/jackson-databind/2.7.0/a3de6e7cd0b50add1c189df2adec79b4ac017bd5/jackson-databind-2.7.0-sources.jar!/" />
+      </SOURCES>
+    </library>
+    <library name="Gradle: com.typesafe.akka:akka-actor_2.11:2.4.4">
+      <CLASSES>
+        <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.typesafe.akka/akka-actor_2.11/2.4.4/fc612a4384cb67763a353f47b7ea100ac5d946fe/akka-actor_2.11-2.4.4.jar!/" />
+      </CLASSES>
+      <JAVADOC />
+      <SOURCES>
+        <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.typesafe.akka/akka-actor_2.11/2.4.4/5c16c994822c39373c3ff04b08d1cfe3a25d1b7e/akka-actor_2.11-2.4.4-sources.jar!/" />
+      </SOURCES>
+    </library>
+    <library name="Gradle: com.typesafe:config:1.3.0">
+      <CLASSES>
+        <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.typesafe/config/1.3.0/f533aa6ea13e443b50e639d070986c42d03efc35/config-1.3.0.jar!/" />
+      </CLASSES>
+      <JAVADOC />
+      <SOURCES>
+        <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.typesafe/config/1.3.0/b7f40ce00f9c552576c2675ba81b19365b74f83a/config-1.3.0-sources.jar!/" />
       </SOURCES>
     </library>
     <library name="Gradle: commons-cli:commons-cli:1.3.1">
@@ -292,7 +316,25 @@
         <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.hamcrest/hamcrest-core/1.3/1dc37250fbc78e23a65a67fbbaf71d2e9cbc3c0b/hamcrest-core-1.3-sources.jar!/" />
       </SOURCES>
     </library>
-    <library name="Gradle: org.scala-lang:scala-library:2.11.8">
+    <library name="Gradle: org.scala-lang.modules:scala-java8-compat_2.11:0.7.0">
+      <CLASSES>
+        <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.scala-lang.modules/scala-java8-compat_2.11/0.7.0/a31b1b36bcf0d53657733b5d40c78d5f090a5dea/scala-java8-compat_2.11-0.7.0.jar!/" />
+      </CLASSES>
+      <JAVADOC />
+      <SOURCES>
+        <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.scala-lang.modules/scala-java8-compat_2.11/0.7.0/fffca5653859d428c99e7b09ff2d503fae8c9477/scala-java8-compat_2.11-0.7.0-sources.jar!/" />
+      </SOURCES>
+    </library>
+    <library name="Gradle: org.scala-lang:scala-library:2.11.8" type="Scala">
+      <properties>
+        <compiler-classpath>
+          <root url="file://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.scala-lang/scala-compiler/2.11.8/fe1285c9f7b58954c5ef6d80b59063569c065e9a/scala-compiler-2.11.8.jar" />
+          <root url="file://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.scala-lang/scala-library/2.11.8/ddd5a8bced249bedd86fb4578a39b9fb71480573/scala-library-2.11.8.jar" />
+          <root url="file://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.scala-lang/scala-reflect/2.11.8/b74530deeba742ab4f3134de0c2da0edc49ca361/scala-reflect-2.11.8.jar" />
+          <root url="file://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.scala-lang.modules/scala-xml_2.11/1.0.4/b67c76af885ba3323ce51bbed4c9232f4bd5d8fd/scala-xml_2.11-1.0.4.jar" />
+          <root url="file://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.scala-lang.modules/scala-parser-combinators_2.11/1.0.4/7369d653bcfa95d321994660477a4d7e81d7f490/scala-parser-combinators_2.11-1.0.4.jar" />
+        </compiler-classpath>
+      </properties>
       <CLASSES>
         <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.scala-lang/scala-library/2.11.8/ddd5a8bced249bedd86fb4578a39b9fb71480573/scala-library-2.11.8.jar!/" />
       </CLASSES>

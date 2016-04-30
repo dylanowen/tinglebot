@@ -22,7 +22,7 @@ import scala.collection.immutable.List;
  * @author dylan.owen
  * @since Feb-2016
  */
-public class Main {
+public class MainJava {
 
     final static Option BRAIN_EXPORT_PATH = Option.builder("e").longOpt("export").argName(
             "export_location").hasArg().desc("where to export the brain").build();
@@ -36,7 +36,8 @@ public class Main {
         MAIN_OPTIONS.addOption(HELP);
     }
 
-    public static void main(String[] args) {
+    /*
+    public static void main2(String[] args) {
         CommandLineParser parser = new DefaultParser();
 
         try {
@@ -85,7 +86,7 @@ public class Main {
             if (exportPath != null) {
                 brain.export(exportPath);
             }
-            */
+            * /
 
             final Timer timer = new Timer();
             for (int i = 0; i < 10; i++) {
@@ -112,6 +113,7 @@ public class Main {
             System.err.println("Parsing failed. Reason: " + exp.getMessage());
         }
     }
+    */
 
     static void printMissingArgError(final Option option) {
         System.err.println("Missing Argument: <" + option.getLongOpt() + "> " + option.getDescription());
