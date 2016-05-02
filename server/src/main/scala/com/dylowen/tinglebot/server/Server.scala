@@ -2,13 +2,15 @@ package com.dylowen.tinglebot.server
 
 import akka.actor.ActorSystem
 import akka.http.scaladsl.Http
-import akka.http.scaladsl.model.HttpMethods._
+import akka.http.scaladsl.coding.Deflate
+import akka.http.scaladsl.model.StatusCodes._
 import akka.http.scaladsl.model._
+import akka.http.scaladsl.server.Directives._
+import akka.http.scaladsl.server.ExceptionHandler
 import akka.stream.ActorMaterializer
-import akka.stream.scaladsl.Sink
 import com.dylowen.tinglebot.brain.NGram
 
-import scala.concurrent.Future
+import scala.io.StdIn
 
 /**
   * TODO add description
@@ -18,34 +20,44 @@ import scala.concurrent.Future
   */
 
 object Server extends App {
-  implicit val system = ActorSystem()
+  implicit val system = ActorSystem("tinglebot-server")
   implicit val materializer = ActorMaterializer()
+  implicit val executionContext = system.dispatcher
+
+  implicit def exceptionHandler: ExceptionHandler =
+    ExceptionHandler {
+      case _: Throwable =>
+        extractUri { uri =>
+          println(s"Request to $uri could not be handled normally")
+          complete(HttpResponse(InternalServerError, entity = "An unknown exception occured"))
+        }
+    }
 
   val serverSource = Http(system).bind(interface = "localhost", port = 8080)
 
   val nGram = new NGram[String](List())
 
-  val requestHandler: HttpRequest => HttpResponse = {
-    case HttpRequest(GET, Uri.Path("/"), _, _, _) =>
-      HttpResponse(entity = HttpEntity(ContentTypes.`text/html(UTF-8)`,
-        "<html><body>Hello Tings!</body></html>"))
-
-    case HttpRequest(GET, Uri.Path("/ping"), _, _, _) =>
-      HttpResponse(entity = "PONG!")
-
-    case HttpRequest(GET, Uri.Path("/crash"), _, _, _) =>
-      sys.error("BOOM!")
-
-    case _: HttpRequest =>
-      HttpResponse(404, entity = "Unknown resource!")
+  val routes = encodeResponseWith(Deflate) {
+    pathPrefix("rest") {
+      RestEndpoint.route
+    } ~ complete(404, HttpEntity(ContentTypes.`text/html(UTF-8)`, "404 not found"))
   }
 
-  val bindingFuture: Future[Http.ServerBinding] =
-    serverSource.to(Sink.foreach { connection =>
-      println("Accepted new connection from " + connection.remoteAddress)
+  val (host, port) = ("localhost", 8080)
+  val bindingFuture = Http().bindAndHandle(routes, host, port)
 
-      connection.handleWithSyncHandler(requestHandler)
-      // this is equivalent to
-      // connection handleWith { Flow[HttpRequest] map requestHandler }
-    }).run()
+  def shutdown = system.terminate
+
+  bindingFuture.onFailure {
+    case ex: Exception =>
+      println(f"Failed to bind to $host:$port", ex)
+      shutdown
+  }
+
+  println(s"Server online at http://$host:$port/\nPress RETURN to stop...")
+
+  StdIn.readLine() // let it run until user presses return
+  bindingFuture
+    .flatMap(_.unbind()) // trigger unbinding from the port
+    .onComplete(_ => shutdown)
 }
