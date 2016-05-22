@@ -10,7 +10,7 @@ import com.dylowen.tinglebot.brain.api.{BInBrain, BInReadBrain, BOutTemp, Intern
   * @author dylan.owen
   * @since May-2016
   */
-class BrainReader[T, V](brain: Brain[T, V]) extends BrainActor {
+class BrainReader[T >: Null, V](brain: Brain[T, V]) extends BrainActor {
   def receive = {
     case message: BInReadBrain =>
       println("received read message")
@@ -19,6 +19,6 @@ class BrainReader[T, V](brain: Brain[T, V]) extends BrainActor {
       message.promise.success(BOutTemp())
 
     //handle anything we don't understand
-    case message => receiveBadMessage(message)
+    case message => unexpectedMessage(message)
   }
 }

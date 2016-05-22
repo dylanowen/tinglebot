@@ -34,13 +34,15 @@ package object api {
 
   abstract class BInWriteBrain extends BInBrain
 
-  case class BInUpdateBrain(name: String, sentence: List[String], promise: Promise[BOut]) extends BInWriteBrain
+  case class BInTrainBrain[T](name: String, sentence: List[T], promise: Promise[BOut]) extends BInWriteBrain
 
   /***************************************
     Outgoing Messages
     ****************************************/
 
   abstract class BOut
+
+  class BOutSuccess extends BOut
 
   case class BOutCreateBrain(name: String) extends BOut
 

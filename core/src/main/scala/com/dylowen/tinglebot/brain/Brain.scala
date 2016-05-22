@@ -10,13 +10,11 @@ import scala.util.Random
   * @author dylan.owen
   * @since Mar-2016
   */
-/*
 object Brain {
   val MIN_GRAM_SIZE: Integer = 2
 }
-*/
 
-class Brain[T, V](var gramSize: Integer) {
+class Brain[T >: Null, V](var gramSize: Integer) {
   protected var dictionary: TrieMap[NGram[T], WeightedSet[T]] = TrieMap()
 
   //val dictionary: scala.collection.mutable.Map[NGram[T], WeightedSetJava[T]] = new mutable.HashMap[]()
@@ -25,6 +23,34 @@ class Brain[T, V](var gramSize: Integer) {
   private val rand: Random = new Random()
   //@transient
   //private var input: List[T] = Nil
+
+  def train(sentence: List[T]): Boolean = {
+    if (sentence.size > Brain.MIN_GRAM_SIZE) {
+      //loop over every spot we could have an nGram
+      for (i <- 0 until sentence.size - Brain.MIN_GRAM_SIZE) {
+        //only create nGrams for the space we have left in the sentence
+        for (j <- Range.inclusive(Brain.MIN_GRAM_SIZE, Integer.min(sentence.size - i, this.gramSize))) {
+          val endIndex = i + j
+
+          val nGram = new NGram(sentence.slice(i, endIndex))
+          val word: T = if (endIndex >= sentence.size) null else sentence(endIndex)
+
+          train(nGram, word)
+        }
+      }
+
+      true
+    }
+    else {
+      false
+    }
+  }
+
+  def train(gram: NGram[T], word: T): Unit = {
+    val set = this.dictionary.getOrElseUpdate(gram, {new WeightedSet[T]()})
+
+    set.add(word)
+  }
 
   /*
   def feed(word: T): Unit = {
@@ -76,6 +102,16 @@ class Brain[T, V](var gramSize: Integer) {
     continueSentence(sentenceHead :+ nextWord.get)
   }
   */
+
+  override def toString: String = {
+    val builder = new StringBuilder()
+
+    for (entry <- this.dictionary) {
+      builder.append(entry._1.toString + " -> " + entry._2.toString + "\n")
+    }
+
+    builder.toString
+  }
 
   //protected def shouldContinueSentence(word: T, sentence: List[T]): Boolean
 

@@ -2,7 +2,7 @@ package com.dylowen.tinglebot.brain
 
 import akka.actor.{ActorSystem, Props}
 import com.dylowen.tinglebot.actors.{BrainCreator, BrainDispatcher}
-import com.dylowen.tinglebot.brain.api.{BInCreateBrain, BInUpdateBrain, BOut}
+import com.dylowen.tinglebot.brain.api.{BInCreateBrain, BInTrainBrain, BOut}
 import org.junit.Test
 
 import scala.concurrent.{Await, Promise}
@@ -37,10 +37,7 @@ class WriteTest {
 
     for (i <- 1 to 1000000) {
       val updatePromise = Promise[BOut]()
-      brainDispatcher ! BInUpdateBrain(brainName, null, updatePromise)
-      updatePromise.future.onSuccess({
-        case result => println(i, result)
-      })
+      brainDispatcher ! BInTrainBrain(brainName, List("a", "b", "c", "d", "e"), updatePromise)
     }
 
     /*
@@ -50,6 +47,8 @@ class WriteTest {
 
     println("done")
 
-    Thread.sleep(100000)
+    Thread.sleep(5000)
+
+
   }
 }

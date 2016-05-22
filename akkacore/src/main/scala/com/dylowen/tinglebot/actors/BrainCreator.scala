@@ -20,7 +20,7 @@ object BrainCreator {
   val VALID_NAME = """[a-z][a-zA-Z0-9]*""".r
 }
 
-class BrainCreator[T, V] extends Actor {
+class BrainCreator[T >: Null, V] extends Actor {
   import context.dispatcher
 
   def receive = {

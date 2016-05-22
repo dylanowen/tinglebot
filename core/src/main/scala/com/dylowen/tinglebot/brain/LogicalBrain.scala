@@ -6,7 +6,7 @@ package com.dylowen.tinglebot.brain
   * @author dylan.owen
   * @since Mar-2016
   */
-trait LogicalBrain[T <: LogicalBrain[T, _], V <: LogicalBrain[_, V]] extends Brain[T, V] {
+trait LogicalBrain[T >: Null, V] extends Brain[T, V] {
   /*
   override def compress(): Unit = {
     //loop over all the nGrams larger than the minimum size
