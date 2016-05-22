@@ -1,6 +1,7 @@
 package com.dylowen.tinglebot.brain
 
 import scala.annotation.tailrec
+import scala.collection.concurrent.TrieMap
 import scala.util.Random
 
 /**
@@ -14,15 +15,16 @@ object Brain {
 }
 
 abstract class Brain[T, V](protected var gramSize: Integer) extends Serializable {
-  protected var dictionary: Map[NGram[T], WeightedSet[T]] = Map()
+  protected var dictionary: TrieMap[NGram[T], WeightedSet[T]] = TrieMap()
 
   //val dictionary: scala.collection.mutable.Map[NGram[T], WeightedSetJava[T]] = new mutable.HashMap[]()
 
   @transient
   private val rand: Random = new Random()
-  @transient
-  private var input: List[T] = Nil
+  //@transient
+  //private var input: List[T] = Nil
 
+  /*
   def feed(word: T): Unit = {
     if (this.input.size >= this.gramSize) {
       var subList: List[T] = this.input
@@ -48,15 +50,19 @@ abstract class Brain[T, V](protected var gramSize: Integer) extends Serializable
 
     this.input :+= word
   }
+  */
 
-  def compress(): Unit
+  //def compress(): Unit
 
+  /*
   def getSentenceWords: List[T] = {
     val start: List[T] = this.getRandomWords
 
     continueSentence(start)
   }
+  */
 
+  /*
   @tailrec
   private def continueSentence(sentenceHead: List[T]): List[T] = {
     val nextWord: Option[T] = getNextWord(sentenceHead)
@@ -67,8 +73,9 @@ abstract class Brain[T, V](protected var gramSize: Integer) extends Serializable
 
     continueSentence(sentenceHead :+ nextWord.get)
   }
+  */
 
-  protected def shouldContinueSentence(word: T, sentence: List[T]): Boolean
+  //protected def shouldContinueSentence(word: T, sentence: List[T]): Boolean
 
   protected def getNextWord(input: List[T]): Option[T] = {
     val startIndex = if (this.gramSize > input.size) 0 else input.size - this.gramSize
@@ -89,7 +96,7 @@ abstract class Brain[T, V](protected var gramSize: Integer) extends Serializable
     set.map(v => v.get)
   }
 
-  def concatSentence(word: List[T]): V
+  //def concatSentence(word: List[T]): V
 
   def stateCount = this.dictionary.size
 

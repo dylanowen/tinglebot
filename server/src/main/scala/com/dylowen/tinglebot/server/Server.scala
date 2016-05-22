@@ -26,9 +26,10 @@ object Server extends App {
 
   implicit def exceptionHandler: ExceptionHandler =
     ExceptionHandler {
-      case _: Throwable =>
+      case e: RuntimeException =>
         extractUri { uri =>
           println(s"Request to $uri could not be handled normally")
+          e.printStackTrace()
           complete(HttpResponse(InternalServerError, entity = "An unknown exception occured"))
         }
     }
@@ -37,13 +38,14 @@ object Server extends App {
 
   val nGram = new NGram[String](List())
 
+  val restEndpoint = new RestEndpoint()
   val routes = encodeResponseWith(Deflate) {
     pathPrefix("rest") {
-      RestEndpoint.route
+      restEndpoint.route
     } ~ complete(404, HttpEntity(ContentTypes.`text/html(UTF-8)`, "404 not found"))
   }
 
-  val (host, port) = ("localhost", 8080)
+  val (host, port) = ("localhost", 8888)
   val bindingFuture = Http().bindAndHandle(routes, host, port)
 
   def shutdown = system.terminate
@@ -54,7 +56,7 @@ object Server extends App {
       shutdown
   }
 
-  println(s"Server online at http://$host:$port/\nPress RETURN to stop...")
+  println(s"Server online at http://$host:$port/\nPress RETURN to stop...\n")
 
   StdIn.readLine() // let it run until user presses return
   bindingFuture

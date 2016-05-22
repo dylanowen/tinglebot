@@ -19,6 +19,8 @@
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
+      <module name="akkacore_main" target="1.8" />
+      <module name="akkacore_test" target="1.8" />
       <module name="core_main" target="1.8" />
       <module name="core_test" target="1.8" />
       <module name="server_main" target="1.8" />
@@ -55,6 +57,7 @@
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
+            <option value="$PROJECT_DIR$/akkacore" />
             <option value="$PROJECT_DIR$/core" />
             <option value="$PROJECT_DIR$/server" />
           </set>
@@ -195,6 +198,9 @@
   </component>
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/akkacore/akkacore.iml" filepath="$PROJECT_DIR$/.idea/modules/akkacore/akkacore.iml" group="akkacore" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/akkacore/akkacore_main.iml" filepath="$PROJECT_DIR$/.idea/modules/akkacore/akkacore_main.iml" group="akkacore" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/akkacore/akkacore_test.iml" filepath="$PROJECT_DIR$/.idea/modules/akkacore/akkacore_test.iml" group="akkacore" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/core/core.iml" filepath="$PROJECT_DIR$/.idea/modules/core/core.iml" group="core" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/core/core_main.iml" filepath="$PROJECT_DIR$/.idea/modules/core/core_main.iml" group="core" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/core/core_test.iml" filepath="$PROJECT_DIR$/.idea/modules/core/core_test.iml" group="core" />
@@ -210,7 +216,7 @@
     <output url="file://$PROJECT_DIR$/out" />
   </component>
   <component name="ScalaCompilerConfiguration">
-    <profile name="Gradle 1" modules="core,server,tinglebot">
+    <profile name="Gradle 1" modules="core,server,akkacore,tinglebot">
       <option name="deprecationWarnings" value="true" />
       <option name="uncheckedWarnings" value="true" />
       <parameters>

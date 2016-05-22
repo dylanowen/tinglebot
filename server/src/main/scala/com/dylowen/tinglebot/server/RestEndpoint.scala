@@ -1,10 +1,17 @@
 package com.dylowen.tinglebot.server
 
-import akka.actor.ActorSystem
+import java.util.concurrent.TimeUnit
+
+import akka.actor.{ActorRef, ActorSystem, Props}
 import akka.http.scaladsl.marshalling.ToResponseMarshallable
-import akka.http.scaladsl.model.{ContentTypes, HttpEntity}
+import akka.http.scaladsl.model.StatusCodes._
 import akka.http.scaladsl.server.{Directives, Route}
-import com.dylowen.tinglebot.server.api.InCreateBrain
+import akka.pattern.ask
+import akka.util.Timeout
+import com.dylowen.tinglebot.brain.BrainCollection
+import com.dylowen.tinglebot.server.api._
+
+import scala.concurrent.ExecutionContext
 
 /**
   * TODO add description
@@ -12,8 +19,18 @@ import com.dylowen.tinglebot.server.api.InCreateBrain
   * @author dylan.owen
   * @since Apr-2016
   */
-object RestEndpoint extends JsonSupport with Directives {
-  def route(implicit system: ActorSystem): Route = pathPrefix("v1") {
+class RestEndpoint(implicit val system: ActorSystem, implicit val ec: ExecutionContext) extends JsonSupport with Directives {
+  implicit val errorFormat = jsonFormat1(Error)
+
+  implicit val createInBrainFormat = jsonFormat1(InCreateBrain)
+  implicit val createOutBrainFormat = jsonFormat1(BrainDefinition)
+
+
+  implicit val timeout: Timeout = Timeout(60, TimeUnit.SECONDS)
+
+  val brains: ActorRef = system.actorOf(Props[BrainCollection], "brains")
+
+  def route: Route = pathPrefix("v1") {
     pathPrefix("brains") {
       pathEndOrSingleSlash {
         get {
@@ -21,25 +38,31 @@ object RestEndpoint extends JsonSupport with Directives {
         } ~
           post {
             entity(as[InCreateBrain]) {
-              test => {
-
-                //val actor = system.actorSelection(system / "path")
-                //actor ! test
-
-                println(test.name)
-                complete(201 -> test)
+              inCreateBrain => {
+                //TODO this is dumb
+                complete({
+                  (brains ? BrainCollection.Create(inCreateBrain.name)).map({
+                    case BrainCollection.BrainDefinition(name) => ToResponseMarshallable(Created -> BrainDefinition(name))
+                    case BrainCollection.Error(message) => ToResponseMarshallable(BadRequest -> Error(message))
+                    case _ => ToResponseMarshallable(InternalServerError -> Error("Internal Server Error"))
+                  })
+                })
               }
-
             }
           }
       } ~
-        path(IntNumber) { id => {
+        path(Segment) { name => {
           get {
-            complete("lkjsdf")
-            //restResponse(s"""{"something": $id}""")
+            complete({
+              (brains ? BrainCollection.Get(name)).map({
+                case BrainCollection.BrainDefinition(name) => ToResponseMarshallable(Created -> BrainDefinition(name))
+                case BrainCollection.Error(message) => ToResponseMarshallable(NotFound -> Error(message))
+                case _ => ToResponseMarshallable(InternalServerError -> Error("Internal Server Error"))
+              })
+            })
           }
         }
-        } ~ complete(404, HttpEntity(ContentTypes.`application/json`, "{missing body}"))
+        } ~ complete(ToResponseMarshallable(NotFound -> Error("Not found")))
     }
   }
 }

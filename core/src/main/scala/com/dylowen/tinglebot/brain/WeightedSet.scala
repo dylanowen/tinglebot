@@ -1,7 +1,9 @@
 package com.dylowen.tinglebot.brain
 
 import java.io.ObjectInputStream
+import java.util.concurrent.atomic.AtomicInteger
 
+import scala.collection.concurrent.TrieMap
 import scala.util.Random
 
 /**
@@ -10,9 +12,9 @@ import scala.util.Random
   * @author dylan.owen
   * @since Mar-2016
   */
-class WeightedSet[T](var map: Map[T, Integer] = Map[T, Integer]()) extends Serializable {
+class WeightedSet[T](var map: TrieMap[T, AtomicInteger] = TrieMap[T, AtomicInteger]()) extends Serializable {
   //private val map: TObjectIntHashMap[T] = new TObjectIntHashMap[T]()
-  private var total: Integer = 0
+  private val total: AtomicInteger = new AtomicInteger(0)
 
   @transient
   private var rand: Random = new Random()
@@ -20,20 +22,18 @@ class WeightedSet[T](var map: Map[T, Integer] = Map[T, Integer]()) extends Seria
   def add(obj: T): Unit = add(obj, 1)
 
   def add(obj: T, inc: Integer): Unit = {
-    val weight: Integer = map.getOrElse(obj, 0)
+    val weight = map.getOrElseUpdate(obj, {new AtomicInteger(0)})
 
-    map += (obj -> (weight + inc))
-    //this.map.adjustOrPutValue(obj, inc, inc)
-
-    this.total += inc
+    weight.addAndGet(inc)
+    this.total.addAndGet(inc)
   }
 
   def get: T = {
     var offset: Integer = 0
-    val randValue: Integer = this.rand.nextInt(this.total)
+    val randValue: Integer = this.rand.nextInt(this.total.get())
 
     this.map.foreach(entry => {
-      offset += entry._2
+      offset += entry._2.get()
 
       if (randValue < offset) {
         return entry._1
@@ -43,7 +43,7 @@ class WeightedSet[T](var map: Map[T, Integer] = Map[T, Integer]()) extends Seria
     throw new AssertionError("How did you get here? offset = " + offset + " randValue = " + randValue)
   }
 
-  def foreach(f: ((T, Integer)) => Unit): Unit = this.map.foreach(f)
+  def foreach(f: ((T, AtomicInteger)) => Unit): Unit = this.map.foreach(f)
 
   def size = map.size
 
@@ -68,5 +68,4 @@ class WeightedSet[T](var map: Map[T, Integer] = Map[T, Integer]()) extends Seria
     stream.defaultReadObject()
     this.rand = new Random()
   }
-
 }

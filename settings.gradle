@@ -1,4 +1,5 @@
 rootProject.name = 'tinglebot'
 include 'core'
+include 'akkacore'
 include 'server'
 

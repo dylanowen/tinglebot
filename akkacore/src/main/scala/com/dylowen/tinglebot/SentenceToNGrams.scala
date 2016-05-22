@@ -1,4 +1,4 @@
-package com.dylowen.tinglebot.brain
+package com.dylowen.tinglebot
 
 import akka.actor.Actor
 

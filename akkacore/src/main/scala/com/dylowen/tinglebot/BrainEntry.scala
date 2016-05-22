@@ -1,4 +1,4 @@
-package com.dylowen.tinglebot.brain
+package com.dylowen.tinglebot
 
 /**
   * TODO add description
