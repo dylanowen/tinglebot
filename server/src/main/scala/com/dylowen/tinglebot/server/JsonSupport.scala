@@ -1,7 +1,6 @@
 package com.dylowen.tinglebot.server
 
 import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport
-import com.dylowen.tinglebot.server.api.{Error, InCreateBrain, OutCreateBrain, WTF}
 import spray.json.DefaultJsonProtocol
 
 import scala.language.implicitConversions

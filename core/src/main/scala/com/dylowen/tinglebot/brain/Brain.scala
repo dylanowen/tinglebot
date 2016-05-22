@@ -10,11 +10,13 @@ import scala.util.Random
   * @author dylan.owen
   * @since Mar-2016
   */
+/*
 object Brain {
   val MIN_GRAM_SIZE: Integer = 2
 }
+*/
 
-abstract class Brain[T, V](protected var gramSize: Integer) extends Serializable {
+class Brain[T, V](var gramSize: Integer) {
   protected var dictionary: TrieMap[NGram[T], WeightedSet[T]] = TrieMap()
 
   //val dictionary: scala.collection.mutable.Map[NGram[T], WeightedSetJava[T]] = new mutable.HashMap[]()
@@ -91,7 +93,7 @@ abstract class Brain[T, V](protected var gramSize: Integer) extends Serializable
 
       operatingList = operatingList.tail
       //loop if we get a null set or the set size is uninteresting and we still have an operating list
-    } while (operatingList.size > Brain.MIN_GRAM_SIZE - 1 && (set.isEmpty || set.exists(v => v.size <= 1)))
+    } while (operatingList.size > 2 /*Brain.MIN_GRAM_SIZE*/ - 1 && (set.isEmpty || set.exists(v => v.size <= 1)))
 
     set.map(v => v.get)
   }

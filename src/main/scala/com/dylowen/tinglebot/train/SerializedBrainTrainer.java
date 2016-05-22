@@ -5,14 +5,14 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 
 import com.dylowen.tinglebot.Timer;
-import com.dylowen.tinglebot.brain.Brain;
+//import com.dylowen.tinglebot.brain.Brain;
 
 /**
  * TODO add description
  *
  * @author dylan.owen
  * @since Feb-2016
- */
+ *
 public class SerializedBrainTrainer<T extends Brain>
     extends JavaTrainer<T> {
 
@@ -43,3 +43,4 @@ public class SerializedBrainTrainer<T extends Brain>
         return brain;
     }
 }
+ */

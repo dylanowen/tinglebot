@@ -19,7 +19,7 @@ import com.dylowen.tinglebot.brain.TextBrain;
  *
  * @author dylan.owen
  * @since Feb-2016
- */
+ *
 public class SkypeDatabaseTrainer
     extends JavaTrainer<TextBrain> {
 
@@ -107,3 +107,4 @@ public class SkypeDatabaseTrainer
         }
     }
 }
+*/

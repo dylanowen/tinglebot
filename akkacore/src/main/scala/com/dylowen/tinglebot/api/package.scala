@@ -9,27 +9,48 @@ import scala.concurrent.Promise
   * @since May-2016
   */
 package object api {
+  /***************************************
+    Incoming Messages
+    ****************************************/
+
   abstract class BIn {
+    //any request coming into our system will be fulfilled with this promise
     def promise: Promise[BOut]
   }
 
-  abstract class BOut
+  /***************************************
+    Specific Brain Interaction
+   ****************************************/
 
+  //any request that's interacting with a specific brain
   abstract class BInBrain extends BIn {
     def name: String
   }
 
-  abstract class BrainRead extends BInBrain
-  abstract class BrainWrite extends BInBrain
+  case class BInCreateBrain(name: String, promise: Promise[BOut]) extends BInBrain
 
-  class BInCreateBrain(val name: String, val promise: Promise[BOut]) extends BInBrain
-  class BOutCreateBrain(val name: String) extends BOut
+  //separate out the message types we'll be sending to brains
+  abstract class BInReadBrain extends BInBrain
 
-  class BInUpdateBrain(val name: String, sentence: List[String], val promise: Promise[BOut]) extends BInBrain
+  abstract class BInWriteBrain extends BInBrain
 
-  class BInReadBrain(val name: String, val promise: Promise[BOut]) extends BInBrain
+  case class BInUpdateBrain(name: String, sentence: List[String], promise: Promise[BOut]) extends BInWriteBrain
 
+  /***************************************
+    Outgoing Messages
+    ****************************************/
+
+  abstract class BOut
+
+  case class BOutCreateBrain(name: String) extends BOut
+
+  case class BOutTemp() extends BOut
+
+  /***************************************
+    Exceptions
+    ****************************************/
+
+  case class InternalError(message: String) extends Exception(message)
   case class BadRequest(message: String) extends Exception(message)
-
   case class BrainNotFound(message: String) extends Exception(message)
 }

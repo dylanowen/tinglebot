@@ -1,13 +1,14 @@
 package com.dylowen.tinglebot
 
 import akka.actor.{Actor, ActorRef, Props}
+import com.dylowen.tinglebot.brain.Brain
 
 /**
   * TODO add description
   *
   * @author dylan.owen
   * @since May-2016
-  */
+  *
 object BrainCollection {
   case class Create(name: String)
   case class Get(name: String)
@@ -46,3 +47,4 @@ class BrainCollection extends Actor {
     }
   }
 }
+*/

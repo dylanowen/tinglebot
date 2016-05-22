@@ -5,7 +5,7 @@ package com.dylowen.tinglebot.brain
   *
   * @author dylan.owen
   * @since Mar-2016
-  */
+  *
 abstract class TextBrain(gramSize: Integer) extends Brain[String, String](gramSize) {
 
   @transient
@@ -22,3 +22,4 @@ abstract class TextBrain(gramSize: Integer) extends Brain[String, String](gramSi
     GenericWordType.getType(word) != GenericWordType.END_SENTENCE && sentence.size < MAX_WORDS_IN_SENTENCE
   }
 }
+*/

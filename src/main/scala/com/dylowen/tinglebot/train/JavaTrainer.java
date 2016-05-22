@@ -5,14 +5,14 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.dylowen.tinglebot.brain.Brain;
+//import com.dylowen.tinglebot.brain.Brain;
 
 /**
  * TODO add description
  *
  * @author dylan.owen
  * @since Feb-2016
- */
+ *
 public abstract class JavaTrainer<T extends Brain> {
 
     protected static final int GRAM_SIZE = 4;
@@ -89,3 +89,4 @@ public abstract class JavaTrainer<T extends Brain> {
                 || isCharPunctuation(c);
     }
 }
+*/

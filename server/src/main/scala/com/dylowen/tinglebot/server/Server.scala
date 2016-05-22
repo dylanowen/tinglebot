@@ -24,6 +24,7 @@ object Server extends App {
   implicit val materializer = ActorMaterializer()
   implicit val executionContext = system.dispatcher
 
+  /*
   implicit def exceptionHandler: ExceptionHandler =
     ExceptionHandler {
       case e: RuntimeException =>
@@ -62,4 +63,5 @@ object Server extends App {
   bindingFuture
     .flatMap(_.unbind()) // trigger unbinding from the port
     .onComplete(_ => shutdown)
+    */
 }

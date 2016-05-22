@@ -2,6 +2,7 @@ package com.dylowen.tinglebot.actors
 
 import akka.actor.Actor
 import com.dylowen.tinglebot.brain.Brain
+import com.dylowen.tinglebot.brain.api.{BInBrain, BInReadBrain, BOutTemp, InternalError}
 
 /**
   * TODO add description
@@ -9,8 +10,15 @@ import com.dylowen.tinglebot.brain.Brain
   * @author dylan.owen
   * @since May-2016
   */
-class BrainReader(brain: Brain) extends Actor {
+class BrainReader[T, V](brain: Brain[T, V]) extends BrainActor {
   def receive = {
+    case message: BInReadBrain =>
+      println("received read message")
 
+      //Thread.sleep(100)
+      message.promise.success(BOutTemp())
+
+    //handle anything we don't understand
+    case message => receiveBadMessage(message)
   }
 }

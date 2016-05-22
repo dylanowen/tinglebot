@@ -8,7 +8,6 @@ import akka.http.scaladsl.model.StatusCodes._
 import akka.http.scaladsl.server.{Directives, Route}
 import akka.pattern.ask
 import akka.util.Timeout
-import com.dylowen.tinglebot.brain.BrainCollection
 import com.dylowen.tinglebot.server.api._
 
 import scala.concurrent.ExecutionContext
@@ -28,6 +27,7 @@ class RestEndpoint(implicit val system: ActorSystem, implicit val ec: ExecutionC
 
   implicit val timeout: Timeout = Timeout(60, TimeUnit.SECONDS)
 
+  /*
   val brains: ActorRef = system.actorOf(Props[BrainCollection], "brains")
 
   def route: Route = pathPrefix("v1") {
@@ -65,4 +65,5 @@ class RestEndpoint(implicit val system: ActorSystem, implicit val ec: ExecutionC
         } ~ complete(ToResponseMarshallable(NotFound -> Error("Not found")))
     }
   }
+  */
 }

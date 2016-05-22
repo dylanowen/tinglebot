@@ -5,7 +5,7 @@ package com.dylowen.tinglebot.brain
   *
   * @author dylan.owen
   * @since Mar-2016
-  */
+  *
 trait DumbBrain[T, V] extends Brain[T, V] {
 
   //dumbly strip out all the weighted sets we ignore
@@ -16,3 +16,4 @@ trait DumbBrain[T, V] extends Brain[T, V] {
     }
   }
 }
+*/
