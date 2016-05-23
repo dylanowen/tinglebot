@@ -28,6 +28,19 @@ class BrainCreatorTest {
   val brainCreatorAlternate = system.actorOf(Props[BrainCreator])
 
   @Test
+  def testNames(): Unit = {
+    Assert.assertFalse(checkSuccess(Await.result(createBrain(""), 10.seconds)))
+    Assert.assertFalse(checkSuccess(Await.result(createBrain("AbadName"), 10.seconds)))
+    Assert.assertFalse(checkSuccess(Await.result(createBrain("0badName"), 10.seconds)))
+    Assert.assertFalse(checkSuccess(Await.result(createBrain("%badname"), 10.seconds)))
+    Assert.assertFalse(checkSuccess(Await.result(createBrain("badname*"), 10.seconds)))
+    Assert.assertFalse(checkSuccess(Await.result(createBrain("234"), 10.seconds)))
+    Assert.assertFalse(checkSuccess(Await.result(createBrain("@#"), 10.seconds)))
+    Assert.assertTrue(checkSuccess(Await.result(createBrain("goodCamelCaseName"), 10.seconds)))
+    Assert.assertTrue(checkSuccess(Await.result(createBrain("goodNameWithNumbers12153Numbers235numbers"), 10.seconds)))
+  }
+
+  @Test
   def testDuplicates(): Unit = {
     val goodResult = Await.result(createBrain(BrainCreatorTest.TEST_BRAIN_NAME), 10.seconds)
     Assert.assertTrue(checkSuccess(goodResult))

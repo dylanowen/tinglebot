@@ -2,10 +2,9 @@ package com.dylowen.tinglebot.actors
 
 import akka.actor.{Actor, InvalidActorNameException, Props}
 import akka.routing.{DefaultResizer, SmallestMailboxPool}
+import com.dylowen.tinglebot.brain.Brain
 import com.dylowen.tinglebot.brain.api.{BInCreateBrain, BOutCreateBrain, BadRequest}
-import com.dylowen.tinglebot.brain.{Brain, LogicalBrain}
 
-import scala.concurrent.Promise
 import scala.util.{Failure, Success}
 /**
   * This creates new brains
