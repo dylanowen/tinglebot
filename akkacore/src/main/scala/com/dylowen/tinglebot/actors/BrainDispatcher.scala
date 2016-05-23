@@ -41,7 +41,7 @@ class BrainDispatcher extends Actor {
   //use the actor system to lookup this router that we will use to operate on the brain
 
   //find the brain and return it if it exists, otherwise return an exception in our action promise
-  def findBrain(action: BInBrain, onSuccess: ActorRef => Unit): Unit = {
+  def findBrainPool(action: BInBrain, onSuccess: ActorRef => Unit): Unit = {
     val fullName = action match {
       case _: BInReadBrain => BrainDispatcher.readBrainName(action.name)
       case _: BInWriteBrain => BrainDispatcher.writeBrainName(action.name)
@@ -56,7 +56,7 @@ class BrainDispatcher extends Actor {
   //send a message to the brain
   def messageBrain(action: BInBrain) = {
     //search for a brain based on the action and send our action to the brain pool
-    findBrain(action, (brainPool) => {
+    findBrainPool(action, (brainPool) => {
       log.debug("messaging pool: " + brainPool.path)
       //println("messaging pool: " + brainPool.path)
       brainPool ! action

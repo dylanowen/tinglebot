@@ -14,7 +14,7 @@ object Brain {
   val MIN_GRAM_SIZE: Integer = 2
 }
 
-class Brain[T >: Null, V](var gramSize: Integer) {
+class Brain[T, V](var gramSize: Integer, val sentenceTerminator: T) {
   protected var dictionary: TrieMap[NGram[T], WeightedSet[T]] = TrieMap()
 
   //val dictionary: scala.collection.mutable.Map[NGram[T], WeightedSetJava[T]] = new mutable.HashMap[]()
@@ -33,7 +33,7 @@ class Brain[T >: Null, V](var gramSize: Integer) {
           val endIndex = i + j
 
           val nGram = new NGram(sentence.slice(i, endIndex))
-          val word: T = if (endIndex >= sentence.size) null else sentence(endIndex)
+          val word: T = if (endIndex >= sentence.size) this.sentenceTerminator else sentence(endIndex)
 
           train(nGram, word)
         }
@@ -103,6 +103,10 @@ class Brain[T >: Null, V](var gramSize: Integer) {
   }
   */
 
+  /**
+    * this is only for debugging, with a real brain it would output way to much data
+    * @return
+    */
   override def toString: String = {
     val builder = new StringBuilder()
 

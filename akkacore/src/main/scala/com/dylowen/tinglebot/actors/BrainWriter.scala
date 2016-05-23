@@ -12,9 +12,9 @@ import scala.util.Success
   * @author dylan.owen
   * @since May-2016
   */
-class BrainWriter[T >: Null, V](brain: Brain[T, V]) extends BrainActor {
+class BrainWriter(brain: Brain[String, String]) extends BrainActor(brain) {
   def receive = {
-    case message: BInTrainBrain[T] =>
+    case message: BInTrainBrain =>
       //train our brain
       brain.train(message.sentence)
 

@@ -20,7 +20,7 @@ object BrainCreator {
   val VALID_NAME = """[a-z][a-zA-Z0-9]*""".r
 }
 
-class BrainCreator[T >: Null, V] extends Actor {
+class BrainCreator extends Actor {
   import context.dispatcher
 
   def receive = {
@@ -41,7 +41,7 @@ class BrainCreator[T >: Null, V] extends Actor {
             BrainCreator.synchronized({
               //even though we're synchronized we can still fail here so look for an invalid actor name exception
               try {
-                val brain = new Brain[T, V](4)// with LogicalBrain[T, V]
+                val brain = new Brain[String, String](4, null)// with LogicalBrain[T, V]
                 val readResizer = DefaultResizer(lowerBound = 2, upperBound = 16)
 
                 //TODO investigate dispatchers

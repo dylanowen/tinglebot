@@ -2,6 +2,7 @@ package com.dylowen.tinglebot.actors
 
 import akka.actor.Actor
 import akka.event.Logging
+import com.dylowen.tinglebot.brain.Brain
 import com.dylowen.tinglebot.brain.api.{BInBrain, BOutSuccess, InternalError}
 
 /**
@@ -14,7 +15,7 @@ object BrainActor {
   val SUCCESS: BOutSuccess = new BOutSuccess()
 }
 
-abstract class BrainActor extends Actor {
+abstract class BrainActor(brain: Brain[String, String]) extends Actor {
   val log = Logging(context.system, this)
 
   def unexpectedMessage(message: Any) = message match {
