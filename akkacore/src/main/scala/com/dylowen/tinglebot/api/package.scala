@@ -12,11 +12,17 @@ package object api {
   /***************************************
     Incoming Messages
     ****************************************/
+  sealed trait ActionType
+  case object Read extends ActionType
+  case object Write extends ActionType
+
 
   abstract class BIn {
     //any request coming into our system will be fulfilled with this promise
     def promise: Promise[BOut]
   }
+
+  case class BInCreateBrain(name: String, promise: Promise[BOut]) extends BIn
 
   /***************************************
     Specific Brain Interaction
@@ -25,14 +31,17 @@ package object api {
   //any request that's interacting with a specific brain
   abstract class BInBrain extends BIn {
     def name: String
+    def actionType: ActionType
   }
 
-  case class BInCreateBrain(name: String, promise: Promise[BOut]) extends BInBrain
-
   //separate out the message types we'll be sending to brains
-  abstract class BInReadBrain extends BInBrain
+  abstract class BInReadBrain extends BInBrain {
+    val actionType = Read
+  }
 
-  abstract class BInWriteBrain extends BInBrain
+  abstract class BInWriteBrain extends BInBrain {
+    val actionType = Write
+  }
 
   case class BInTrainBrain(name: String, sentence: List[String], promise: Promise[BOut]) extends BInWriteBrain
 

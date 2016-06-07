@@ -46,10 +46,12 @@ class Brain[T, V](var gramSize: Integer, val sentenceTerminator: T) {
     }
   }
 
-  def train(gram: NGram[T], word: T): Unit = {
-    val set = this.dictionary.getOrElseUpdate(gram, {new WeightedSet[T]()})
+  def train(nGram: NGram[T], word: T): Unit = train(nGram, word, 1)
 
-    set.add(word)
+  private def train(nGram: NGram[T], word: T, weight: Int): Unit = {
+    val set = this.dictionary.getOrElseUpdate(nGram, {new WeightedSet[T]()})
+
+    set.add(word, weight)
   }
 
   /*

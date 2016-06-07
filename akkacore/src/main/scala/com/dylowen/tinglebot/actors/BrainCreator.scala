@@ -2,6 +2,7 @@ package com.dylowen.tinglebot.actors
 
 import akka.actor.{Actor, InvalidActorNameException, Props}
 import akka.routing.{DefaultResizer, SmallestMailboxPool}
+import com.dylowen.tinglebot.BrainDispatcher
 import com.dylowen.tinglebot.brain.Brain
 import com.dylowen.tinglebot.brain.api.{BInCreateBrain, BOutCreateBrain, BadRequest}
 
@@ -33,7 +34,7 @@ class BrainCreator extends Actor {
         val writeName = BrainDispatcher.writeBrainName(create.name)
 
         //see if a brain with this name already exists
-        BrainDispatcher.getBrain(readName).onComplete({
+        BrainDispatcher.getBrain(readName)(context.system).onComplete({
           case Success(_) => create.promise.failure(BadRequest(BrainCreator.BRAIN_EXISTS_ERROR))
           case Failure(_) =>
             //synchronize across the object to ensure we can't ever create mismatched read write actors (hopefully...)
