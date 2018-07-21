@@ -18,10 +18,6 @@ public enum GenericWordType implements WordType {
         this.leadingSpace = leadingSpace;
     }
 
-    public String getSpacedWord(final String word) {
-        return ((this.leadingSpace) ? " " : "") + word;
-    }
-
     public void appendSpacedWord(final String word, final StringBuilder sb) {
         if (this.leadingSpace) {
             sb.append(" ");
@@ -34,6 +30,10 @@ public enum GenericWordType implements WordType {
         final GenericWordType type = getType(word);
 
         type.appendSpacedWord(word, sb);
+    }
+
+    public static String getSpacedWord(final String word) {
+        return GenericWordType.getType(word).leadingSpace ? " " + word : word;
     }
 
     public static GenericWordType getType(final String word) {

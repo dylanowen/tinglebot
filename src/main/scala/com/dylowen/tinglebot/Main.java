@@ -1,7 +1,5 @@
 package com.dylowen.tinglebot;
 
-import java.util.List;
-
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
@@ -15,7 +13,8 @@ import com.dylowen.tinglebot.brain.TextBrain;
 import com.dylowen.tinglebot.train.SerializedBrainTrainer;
 import com.dylowen.tinglebot.train.SkypeDatabaseTrainer;
 import com.dylowen.tinglebot.train.TextTrainer;
-import com.dylowen.tinglebot.train.Trainer;
+import com.dylowen.tinglebot.train.JavaTrainer;
+import scala.collection.immutable.List;
 
 /**
  * TODO add description
@@ -25,8 +24,8 @@ import com.dylowen.tinglebot.train.Trainer;
  */
 public class Main {
 
-    final static Option BRAIN_EXPORT_PATH = Option.builder("e").longOpt("export").argName("export_location").hasArg().desc(
-            "where to export the brain").build();
+    final static Option BRAIN_EXPORT_PATH = Option.builder("e").longOpt("export").argName(
+            "export_location").hasArg().desc("where to export the brain").build();
 
     final static Option HELP = new Option("help", "print this menu");
 
@@ -65,7 +64,7 @@ public class Main {
             final int extensionIndex = path.lastIndexOf('.');
             final String extension = (extensionIndex < 0) ? "" : path.substring(extensionIndex + 1);
 
-            final Trainer<TextBrain> trainer;
+            final JavaTrainer<TextBrain> trainer;
             if ("json".equals(extension)) {
                 trainer = new SkypeDatabaseTrainer(path);
             }
@@ -82,9 +81,11 @@ public class Main {
             final TextBrain brain = trainer.train();
 
             //check if we should export the brain
+            /*
             if (exportPath != null) {
                 brain.export(exportPath);
             }
+            */
 
             final Timer timer = new Timer();
             for (int i = 0; i < 10; i++) {

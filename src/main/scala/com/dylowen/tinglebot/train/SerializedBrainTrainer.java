@@ -14,7 +14,7 @@ import com.dylowen.tinglebot.brain.Brain;
  * @since Feb-2016
  */
 public class SerializedBrainTrainer<T extends Brain>
-    extends Trainer<T> {
+    extends JavaTrainer<T> {
 
     private final String filePath;
 
@@ -27,10 +27,12 @@ public class SerializedBrainTrainer<T extends Brain>
         final Timer timer = new Timer();
         final T brain;
 
-        try (FileInputStream fileIn = new FileInputStream(this.filePath); ObjectInputStream in = new ObjectInputStream(fileIn)) {
+        try (FileInputStream fileIn = new FileInputStream(this.filePath);
+                ObjectInputStream in = new ObjectInputStream(fileIn)) {
             brain = (T) in.readObject();
 
-        } catch (IOException | ClassNotFoundException e) {
+        }
+        catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
             throw new RuntimeException(e);
         }

@@ -3,7 +3,6 @@ package com.dylowen.tinglebot.train;
 import java.io.File;
 import java.io.IOException;
 
-import com.dylowen.tinglebot.brain.LogicalTextBrain;
 import org.apache.commons.lang3.StringEscapeUtils;
 
 import com.almworks.sqlite4java.SQLite;
@@ -12,6 +11,7 @@ import com.almworks.sqlite4java.SQLiteException;
 import com.almworks.sqlite4java.SQLiteStatement;
 import com.dylowen.tinglebot.Json;
 import com.dylowen.tinglebot.Timer;
+import com.dylowen.tinglebot.brain.LogicalTextBrain;
 import com.dylowen.tinglebot.brain.TextBrain;
 
 /**
@@ -21,7 +21,7 @@ import com.dylowen.tinglebot.brain.TextBrain;
  * @since Feb-2016
  */
 public class SkypeDatabaseTrainer
-    extends Trainer<TextBrain> {
+    extends JavaTrainer<TextBrain> {
 
     private final Settings settings;
 
@@ -100,5 +100,10 @@ public class SkypeDatabaseTrainer
     public static class Settings {
         public String dbPath;
         public String sqlWhereClause;
+
+        @Override
+        public String toString() {
+            return dbPath + " " + sqlWhereClause;
+        }
     }
 }
